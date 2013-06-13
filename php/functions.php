@@ -1,5 +1,5 @@
 <?php
-function genKey (){
+function genKey () {
 	$rCh = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	$key = "";
 	for ( $i = 0; $i < 8; $i++ ){
@@ -7,7 +7,26 @@ function genKey (){
 	}
 	return $key;
 }
-function thumbImg ($img, $size = 200){
+function formatDate ($date) {
+	$fecha = explode(' ', $date);
+	$diasem = (int) $fecha[0];
+
+	$fecha = explode('-', $fecha[1]);
+	$dia = $fecha[0];
+	$mes = (int) $fecha[1];
+	$year = $fecha[2];
+
+	$tMes = 'nohay enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre';
+	$tDia = 'doming lunes martes miércoles jueves viernes sábado';
+	$tMes = explode(' ', $tMes);
+	$tDia = explode(' ', $tDia);
+
+	$diasem = $tDia[$diasem];
+	$mes = $tMes[$mes];
+
+	return "El {$diasem} {$dia} de {$mes} del {$year}";
+}
+function thumbImg ($img, $size = 200) {
 
 	$image_type = explode(".", $img);
 	$image_type = end($image_type);

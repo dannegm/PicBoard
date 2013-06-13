@@ -192,6 +192,7 @@ input {
 		width: 450px;
 		display: block;
 		margin-right: 20px;
+		margin-bottom: 20px;
 		float: left;
 
 		img {
@@ -201,11 +202,40 @@ input {
 	}
 	div {
 		overflow: hidden;
+		min-width: 450px;
 
-		span {
-			color: #444;
-			font-size: 16px;
+		.miniProfile {
+			overflow: hidden;
 			margin-left: 0;
+
+			figure {
+				width: 50px;
+				height: 50px;
+				display: block;
+				float: left;
+				overflow: hidden;
+				margin: 0 10px 0 0;
+
+				img {
+					width: 100%;
+				}
+			}
+			div {
+				overflow: hidden;
+				margin: 0 10px 0 10px;
+
+				strong {
+					font-size: 20px;
+					font-weight: normal;
+					color: #222;
+					display: block;
+				}
+				span {
+					font-size: 14px;
+					color: #444;
+					display: block;
+				}
+			}
 		}
 		.btn {
 			display: inline-block;
@@ -216,7 +246,14 @@ input {
 			width: 300px;
 			margin-left: 0;
 		}
-
+		#fbComments {
+			width: 450px;
+			margin: 0;
+			margin-top: 10px;
+			border: 0;
+			padding: 0;
+			min-height: 200px;
+		}
 	}
 }
 

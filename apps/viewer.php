@@ -1,3 +1,9 @@
+<?php
+	include_once('../php/functions.php');
+	$p = isset($_GET['p']) ? $_GET['p'] : false;
+	$pic = file_get_contents("http://dannegm.pro/picboard/json/listar.php?key=picture&value={$p}");
+	$pic = json_decode($pic);
+?>
 <!doctype html>
 <!-- [ Power By Dannegm (c) 2012 - http://dannegm.com ] -->
 <html lang="en">
@@ -7,11 +13,11 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Dannegm Picboard</title>
 
-	<link rel="stylesheet/less" href="less/default.less" />
+	<link rel="stylesheet/less" href="../less/default.less" />
 
-	<script src="js/jquery.min.js"></script>
-	<script src="js/less.min.js"></script>
-	<script src="js/script.js"></script>
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/less.min.js"></script>
+	<script src="../js/script.js"></script>
 </head>
 <body class="noSidebar">
 
@@ -79,28 +85,25 @@
 	<section id="container">
 		<article id="picture">
 			<figure>
-				<img id="pPicture" src="#" />
+				<img id="pPicture" src="<?php echo "http://dannegm.pro/picboard/{$pic->id}"; ?>" />
 			</figure>
-			<div>
+			<div>				
+				<?php $author = $pic->author; ?>
 				<div class="miniProfile">
 					<figure>
-						<img id="muPicture" src="#" />
+						<img id="muPicture" src="<?php echo "http://graph.facebook.com/{$author->fbId}/picture?type=large"; ?>" />
 					</figure>
 					<div>
-						<strong id="muName"></strong>
-						<span id="pDate"></span>
+						<strong id="muName"><?php echo $author->name; ?></strong>
+						<span id="pDate"><?php echo formatDate($pic->date); ?></span>
 					</div>
 				</div>
 				<input id="pLink" type="text" placeholder="Url de la imágen" />
 				<a id="goToPicture" class="btn" href="#">Ver en tamaño completo</a>
-				<a id="goToPictures" class="btn clear" href="#">Regresar</a>
-
-				<iframe id="fbComments" name="fbComments"></iframe>
+				<a class="btn clear" href="http://dannegm.pro/picboard">Regresar</a>
+				<div class="fb-comments" data-href="http://dannegm.pro/picboard/<?php echo $pic->id; ?>" data-width="450" data-num-posts="10"></div>
 			</div>
 		</article>
-
-		<ul id="pictures">
-		</ul>
 	</section>
 </body>
 </html>

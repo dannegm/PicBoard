@@ -186,7 +186,7 @@ function buildUpload (files) {
 function addUploadImg (src, uid){
 	$('#preview').attr('src', src).fadeIn();
 	if (uid){
-		$('#pictures').prepend('<li class="gotopic" id="' + uid + '" rel="' + uid + ':' + toDay() + '"><img src="' + window.location.href + 'apps/thumbs.php?p=' + uid + '"/></li>');
+		$('#pictures').prepend('<li class="gotopic" id="' + uid + '" rel="' + uid + '"><img src="' + window.location.href + 'apps/thumbs.php?p=' + uid + '"/></li>');
 		$('#' + uid).addClass('in');
 	}
 }
@@ -197,7 +197,7 @@ function list_pictures () {
 	$.getJSON(jsonPictures,
 		function (res){
 			for(x in res){
-				var tmp = '<li class="gotopic" id="' + res[x].id + '" rel="' + res[x].id + ':' + res[x].date + '"><img src="' + window.location.href + 'apps/thumbs.php?p=' + res[x].id + '"/></li>';
+				var tmp = '<li class="gotopic" id="' + res[x].id + '" rel="' + res[x].id + '"><img src="' + window.location.href + 'apps/thumbs.php?p=' + res[x].id + '"/></li>';
 				$('#pictures').append(tmp);
 				$('#' + res[x].id).addClass('in');
 			}
@@ -241,41 +241,52 @@ window.onpopstate = function(e) {
 		case 'profile': break;
 	}
 }
+
+var picc;
 function goToPicture (){
 	visor = 1;
-	var picInfo = $(this).attr('rel');
-		picInfo = picInfo.split(':');
-	var uid = picInfo[0],
-		date = picInfo[1];
+	var picId = $(this).attr('rel');
 
-	$('#imgPicture').attr('src', window.location.href + uid);
-	$('#linkPicture').val(window.location.href + uid);
-	$('#goToPicture').attr('href', window.location.href + uid);
+	var jsonPictures = 'json/listar.php?key=picture&value=' + picId;
+	$.getJSON(jsonPictures,
+		function(res){
+			var uid = picId,
+				date = res[0].date;
 
-	window.history.pushState('viewer', 'Dannegm Picboard', '/picboard/' + uid);
+			$('#muPicture').attr('src', 'http://graph.facebook.com/' + res[0].author.fbId + '/picture?type=large');
+			$('#muName').text(res[0].author.name);
 
-	var fecha = date.split(' ');
-	var diasem = parseInt( fecha[0] );
+			$('#pPicture').attr('src', window.location.href + uid);
+			$('#pLink').val(window.location.href + uid);
+			$('#goToPicture').attr('href', window.location.href + uid);
 
-	fecha = fecha[1].split('-');
-	var	dia = fecha[0],
-		mes = parseInt( fecha[1] ),
-		year = fecha[2];
+			var fecha = date.split(' ');
+			var diasem = parseInt( fecha[0] );
 
-	var tMes = 'nohay enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre',
-		tDia = 'Doming Lunes Martes Miércoles Jueves Viernes Sábado';
-		tMes = tMes.split(' ');
-		tDia = tDia.split(' ');
+			fecha = fecha[1].split('-');
+			var	dia = fecha[0],
+				mes = parseInt( fecha[1] ),
+				year = fecha[2];
 
-		diasem = tDia[diasem];
-		mes = tMes[mes];
+			var tMes = 'nohay enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre',
+				tDia = 'doming lunes martes miércoles jueves viernes sábado';
+				tMes = tMes.split(' ');
+				tDia = tDia.split(' ');
 
-	var formatDate = diasem + ' ' + dia + ' de ' + mes + ' del ' + year;
-	$('#datePicture').text(formatDate);
+				diasem = tDia[diasem];
+				mes = tMes[mes];
 
-	$('#pictures').fadeOut();
-	$('#picture').fadeIn();
-	$('html, body').scrollTop(0);
+			var formatDate = 'El ' + diasem + ' ' + dia + ' de ' + mes + ' del ' + year;
+			$('#pDate').text(formatDate);
+
+			$('#fbComments').attr('src', 'apps/fbComments.php?uid=' + uid);
+
+			window.history.pushState('viewer', 'Dannegm Picboard', '/picboard/' + uid);
+
+			$('#pictures').fadeOut();
+			$('#picture').fadeIn();
+			$('html, body').scrollTop(0);
+		});
 }
 function goToPictures (){
 	$('#pictures').fadeIn();
