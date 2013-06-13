@@ -12,6 +12,15 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/less.min.js"></script>
 	<script src="js/script.js"></script>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-30390599-3', 'dannegm.pro');
+		ga('send', 'pageview');
+	</script>
 </head>
 <body class="noSidebar">
 
@@ -74,6 +83,11 @@
 				<img id="preview" src="#" />
 			</figure>
 		</div>
+
+		<p>
+			<span>Proyecto desarollodado por <a href="http://github.com/dannegm">@dannegm</a>, no se te olvide seguir el proyecto en github.</span>
+			<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=dannegm&repo=PicBoard&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="260px" height="30px"></iframe>
+		</p>
 	</section>
 
 	<section id="container">
