@@ -139,7 +139,7 @@ function buildUpload (files) {
 
 	if(imgData){
 		$.ajax({
-			url : 'apps/demo_upload.php',
+			url : 'apps/upload.php',
 			type : 'POST',
 			data : imgData,
 			processData : false,
