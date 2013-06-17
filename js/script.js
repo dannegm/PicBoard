@@ -179,7 +179,18 @@ function buildUpload (files) {
 					addUploadImg(picture, res[2]);
 					$('html, body').scrollTop(0);
 
+					FB.ui({
+						method: 'feed',
+						link: cdomain + '#/viewer/' + res[2],
+						picture: cdomain + res[2] + '?thumb',
+						name: 'Dannegm Picboard',
+						caption: 'He subido una imagen'
+					}, function (r) {
+						console.log(r);
+					});
+
 					goToPictures();
+					buildUser();
 				}else{
 					if (res[1] == '1'){
 						addUploadImg(picture, false);
@@ -284,7 +295,7 @@ function goToPicture (picId){
 				year = fecha[2];
 
 			var tMes = 'nohay enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre',
-				tDia = 'doming lunes martes miércoles jueves viernes sábado';
+				tDia = 'domingo lunes martes miércoles jueves viernes sábado';
 				tMes = tMes.split(' ');
 				tDia = tDia.split(' ');
 
@@ -332,7 +343,7 @@ function run () {
 
 	if ( thisDomain.match(/viewer/i) ){
 		var picIdn = thisDomain.split('/').reverse();
-		thisPic = picIdn;
+		thisPic = picIdn[0];
 		goToPicture(picIdn[0]);
 	}
 
