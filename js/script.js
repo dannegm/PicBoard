@@ -18,6 +18,22 @@ function toDay () {
 	return diasem + ' ' + dia + '-' + mes + '-' + year + ' ';
 }
 
+function buildUser () {
+	$.post('apps/login.php', 
+		{ 'fbId': fbId },
+		function(res){
+			var user = $.parseJSON(res);
+			$('#uPicture').attr('src', 'http://graph.facebook.com/' + user.fbId + '/picture?type=large');
+			$('#uName').text(user.name);
+			$('#uCount').text(user.count);
+			$('#uGoToProfile').attr('rel', user.fbId);
+
+			$('#noLogin').fadeOut();
+			$('body').removeClass('noSidebar');
+		}
+	);
+}
+
 function login (){
 	function doLogin (){
 		FB.api('/me', function(user){
@@ -29,21 +45,7 @@ function login (){
 				if ( thisDomain.match(/viewer/i) ){
 					window.fbComments.location.reload();
 				}
-			
-				$.post('apps/login.php', 
-					{ 'fbId': fbId },
-					function(res){
-						var user = $.parseJSON(res);
-						$('#uPicture').attr('src', 'http://graph.facebook.com/' + user.fbId + '/picture?type=large');
-						$('#uName').text(user.name);
-						$('#uCount').text(user.count);
-						$('#uGoToProfile').attr('rel', user.fbId);
-
-						$('#noLogin').fadeOut();
-						$('body').removeClass('noSidebar');
-					}
-				);
-			
+				buildUser();
 		});
 	}
 	function chkLogin (resp) {
@@ -210,7 +212,6 @@ function list_pictures () {
 				var tmp = '<li class="gotopic" id="' + res[x].id + '" rel="' + res[x].id + '"><img src="' + cdomain + res[x].id + '?thumb"/></li>';
 				//$('#pictures').append(tmp);
 				$(tmp).insertBefore('#gifloading');
-				$('#' + res[x].id).addClass('in');
 			}
 			$('#gifloading').remove();
 		}
@@ -254,7 +255,7 @@ window.onpopstate = function(e) {
 	}
 }
 
-var picc;
+var pUser;
 function goToPicture (picId){
 	visor = 1;
 
@@ -266,6 +267,9 @@ function goToPicture (picId){
 
 			$('#muPicture').attr('src', 'http://graph.facebook.com/' + res[0].author.fbId + '/picture?type=large');
 			$('#muName').text(res[0].author.name);
+			$('.miniProfile').attr('rel', res[0].author.fbId);
+
+			pUser = res[0].author;
 
 			$('#pPicture').attr('src', cdomain + uid);
 			$('#pLink').val(cdomain + uid);
@@ -294,16 +298,10 @@ function goToPicture (picId){
 
 			window.history.pushState('viewer', 'Dannegm Picboard', '/picboard/#/viewer/' + uid);
 
-			$('#fbLike').live('click', function(e){
-				e.preventDefault();
-				FB.api('me/og.likes', 'post', {
-					object: cdomain + uid
-				}, function(r) { console.log(r); });
-			});
-
 			$('#pictures').fadeOut();
 			$('#picture').fadeIn();
 			$('html, body').scrollTop(0);
+			$('header ul li').removeClass('active');
 		});
 }
 function goToPictures (){
@@ -338,6 +336,36 @@ function run () {
 		goToPicture(picIdn[0]);
 	}
 
+	$('#goToHome').live('click', function(e){
+		e.preventDefault();
+		buildUser();
+		jsonStep = 1;
+		jsonKey = '';
+		jsonValue = '';
+		$('#pictures').html('');
+		list_pictures();
+		goToPictures();
+
+		$('header ul li').removeClass('active');
+		$(this).addClass('active');
+	});
+	$('#goToProfile').live('click', function(e){
+		e.preventDefault();
+		buildUser();
+		jsonStep = 1;
+		jsonKey = 'author';
+		jsonValue = fbId;
+		$('#pictures').html('');
+		list_pictures();
+		goToPictures();
+
+		$('header ul li').removeClass('active');
+		$(this).addClass('active');
+	});
+	$('#goToAbout').live('click', function(e){
+		e.preventDefault();
+	});
+
 	$('.gotopic').live('click', function() {
 		thisPic = $(this).attr('rel');
 		goToPicture( $(this).attr('rel') );
@@ -345,6 +373,7 @@ function run () {
 	$('#goToPictures').live('click', function(e){
 		e.preventDefault();
 		goToPictures();
+		$('header ul li').removeClass('active');
 	});
 	$('.viewProfile').live('click', function(e){
 		e.preventDefault();
@@ -356,6 +385,21 @@ function run () {
 
 		$('#pictures').html('');
 		list_pictures();
+		$('header ul li').removeClass('active');
+	});
+	$('.miniProfile').live('click', function(e){
+		$('#uPicture').attr('src', 'http://graph.facebook.com/' + pUser.fbId + '/picture?type=large');
+		$('#uName').text(pUser.name);
+		$('#uCount').text(pUser.count);
+		$('#uGoToProfile').attr('rel', pUser.fbId);
+
+		$('#pictures').html("");
+
+		jsonStep = 1;
+		jsonKey = 'author';
+		jsonValue = pUser.fbId;
+		list_pictures();
+		goToPictures();
 	});
 
 	$(window).scroll(scroll_loaded);

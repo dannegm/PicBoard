@@ -41,6 +41,11 @@
 	<header>
 		<h1><a href="<?php echo $domain; ?>">Dannegm</a></h1>
 		<h2>PicBoard</h2>
+		<ul>
+			<li id="goToHome" class="active">Inicio</li>
+			<li id="goToProfile">Mis imágenes</li>
+			<li id="goToAbout">Acerca de</li>
+		</ul>
 	</header>
 
 	<section id="noLogin">

@@ -45,6 +45,7 @@ class Pics
 		switch ($key) {
 			case 'author': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$value}' ORDER BY `id` DESC LIMIT {$offset},20"; break;
 			case 'picture': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `uid` = '{$value}'"; break;
+			case 'width': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `width` > '{$value}'"; break;
 			default: $query = "SELECT * FROM `{$this->_tb_pics}` ORDER BY `id` DESC LIMIT {$offset},20"; break;
 		}
 
