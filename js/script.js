@@ -2,6 +2,11 @@ var jsonStep = 1,
 	jsonKey = '',
 	jsonValue = '',
 	visor = 0,
+	fbToken = '',
+	fbId = '',
+	thisDomain = window.location.href,
+	thisPic = '';
+	cdomain = 'http://dannegm.pro/picboard/',
 	uploadingStatus = 0;
 
 function toDay () {
@@ -17,9 +22,13 @@ function login (){
 	function doLogin (){
 		FB.api('/me', function(user){
 			var fbAuth = FB.getAuthResponse(),
-				fbId = fbAuth.userID;
-				fbToken = fbAuth.accessToken,
 				fbGraph = 'https://graph.facebook.com/' + fbId + '?access_token=' + fbToken;
+				fbId = fbAuth.userID;
+				fbToken = fbAuth.accessToken;
+
+				if ( thisDomain.match(/viewer/i) ){
+					window.fbComments.location.reload();
+				}
 			
 				$.post('apps/login.php', 
 					{ 'fbId': fbId },
@@ -47,7 +56,7 @@ function login (){
 					if (resp.authResponse) {
 						doLogin();
 					}
-				}, {scope: 'email'});
+				}, {scope: 'email, publish_actions'});
 			});
 		}
 	}
@@ -163,7 +172,7 @@ function buildUpload (files) {
 
 				var res = r.split(':');
 				if(res[0] == '1'){
-					$('#newLink').val(window.location.href + res[2]);
+					$('#newLink').val( cdomain + res[2]);
 					$('#elink').fadeIn();
 					addUploadImg(picture, res[2]);
 					$('html, body').scrollTop(0);
@@ -172,7 +181,7 @@ function buildUpload (files) {
 				}else{
 					if (res[1] == '1'){
 						addUploadImg(picture, false);
-						$('#newLink').val( window.location.href + res[2]);
+						$('#newLink').val( cdomain + res[2]);
 						$('#elink').fadeIn();
 						$('#exist').css({'display':'block'});
 					}else{
@@ -186,7 +195,7 @@ function buildUpload (files) {
 function addUploadImg (src, uid){
 	$('#preview').attr('src', src).fadeIn();
 	if (uid){
-		$('#pictures').prepend('<li class="gotopic" id="' + uid + '" rel="' + uid + '"><img src="' + window.location.href + 'apps/thumbs.php?p=' + uid + '"/></li>');
+		$('#pictures').prepend('<li class="gotopic" id="' + uid + '" rel="' + uid + '"><img src="' + cdomain + uid + '?thumb"/></li>');
 		$('#' + uid).addClass('in');
 	}
 }
@@ -196,11 +205,14 @@ function list_pictures () {
 	var jsonPictures = 'json/listar.php?key=' + jsonKey + '&value=' + jsonValue + '&step=' + jsonStep;
 	$.getJSON(jsonPictures,
 		function (res){
+			$('#pictures').append('<li id="gifloading"></li>');
 			for(x in res){
-				var tmp = '<li class="gotopic" id="' + res[x].id + '" rel="' + res[x].id + '"><img src="' + window.location.href + 'apps/thumbs.php?p=' + res[x].id + '"/></li>';
-				$('#pictures').append(tmp);
+				var tmp = '<li class="gotopic" id="' + res[x].id + '" rel="' + res[x].id + '"><img src="' + cdomain + res[x].id + '?thumb"/></li>';
+				//$('#pictures').append(tmp);
+				$(tmp).insertBefore('#gifloading');
 				$('#' + res[x].id).addClass('in');
 			}
+			$('#gifloading').remove();
 		}
 	);
 }
@@ -237,15 +249,14 @@ window.onpopstate = function(e) {
 			list_pictures();
 			goToPictures(); 
 			break;
-		case 'viewer': goToPicture(); break;
+		case 'viewer': goToPicture(thisPic); break;
 		case 'profile': break;
 	}
 }
 
 var picc;
-function goToPicture (){
+function goToPicture (picId){
 	visor = 1;
-	var picId = $(this).attr('rel');
 
 	var jsonPictures = 'json/listar.php?key=picture&value=' + picId;
 	$.getJSON(jsonPictures,
@@ -256,9 +267,9 @@ function goToPicture (){
 			$('#muPicture').attr('src', 'http://graph.facebook.com/' + res[0].author.fbId + '/picture?type=large');
 			$('#muName').text(res[0].author.name);
 
-			$('#pPicture').attr('src', window.location.href + uid);
-			$('#pLink').val(window.location.href + uid);
-			$('#goToPicture').attr('href', window.location.href + uid);
+			$('#pPicture').attr('src', cdomain + uid);
+			$('#pLink').val(cdomain + uid);
+			$('#goToPicture').attr('href', cdomain + uid);
 
 			var fecha = date.split(' ');
 			var diasem = parseInt( fecha[0] );
@@ -281,7 +292,14 @@ function goToPicture (){
 
 			$('#fbComments').attr('src', 'apps/fbComments.php?uid=' + uid);
 
-			window.history.pushState('viewer', 'Dannegm Picboard', '/picboard/' + uid);
+			window.history.pushState('viewer', 'Dannegm Picboard', '/picboard/#/viewer/' + uid);
+
+			$('#fbLike').live('click', function(e){
+				e.preventDefault();
+				FB.api('me/og.likes', 'post', {
+					object: cdomain + uid
+				}, function(r) { console.log(r); });
+			});
 
 			$('#pictures').fadeOut();
 			$('#picture').fadeIn();
@@ -312,9 +330,18 @@ function run () {
 	hasTargetBlank();
 
 	list_pictures();
-	window.history.pushState('home', 'Dannegm Picboard', '/picboard/');
+	//window.history.pushState('home', 'Dannegm Picboard', '/picboard/');
 
-	$('.gotopic').live('click', goToPicture);
+	if ( thisDomain.match(/viewer/i) ){
+		var picIdn = thisDomain.split('/').reverse();
+		thisPic = picIdn;
+		goToPicture(picIdn[0]);
+	}
+
+	$('.gotopic').live('click', function() {
+		thisPic = $(this).attr('rel');
+		goToPicture( $(this).attr('rel') );
+	});
 	$('#goToPictures').live('click', function(e){
 		e.preventDefault();
 		goToPictures();

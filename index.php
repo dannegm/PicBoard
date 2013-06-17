@@ -1,17 +1,20 @@
+<?php
+	$domain = "http://dannegm.pro/picboard/";
+?>
 <!doctype html>
-<!-- [ Power By Dannegm (c) 2012 - http://dannegm.com ] -->
+<!-- [ Power By Dannegm (c) 2013 - http://dannegm.pro ] -->
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<title>Dannegm Picboard</title>
 
-	<link rel="stylesheet/less" href="less/default.less" />
+	<link rel="stylesheet/less" href="<?php echo $domain; ?>less/default.less" />
 
-	<script src="js/jquery.min.js"></script>
-	<script src="js/less.min.js"></script>
-	<script src="js/script.js"></script>
+	<script src="<?php echo $domain; ?>js/jquery.min.js"></script>
+	<script src="<?php echo $domain; ?>js/less.min.js"></script>
+	<script src="<?php echo $domain; ?>js/script.js"></script>
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -36,7 +39,7 @@
 </script>
 
 	<header>
-		<h1><a href="http://dannegm.pro">Dannegm</a></h1>
+		<h1><a href="<?php echo $domain; ?>">Dannegm</a></h1>
 		<h2>PicBoard</h2>
 	</header>
 
@@ -86,7 +89,7 @@
 
 		<p>
 			<span>Proyecto desarollodado por <a href="http://github.com/dannegm">@dannegm</a>, no se te olvide seguir el proyecto en github.</span>
-			<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=dannegm&repo=PicBoard&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="260px" height="30px"></iframe>
+			<iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=dannegm&amp;repo=PicBoard&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="260px" height="30px"></iframe>
 		</p>
 	</section>
 
@@ -105,9 +108,12 @@
 						<span id="pDate"></span>
 					</div>
 				</div>
-				<input id="pLink" type="text" placeholder="Url de la imágen" />
-				<a id="goToPicture" class="btn" href="#">Ver en tamaño completo</a>
-				<a id="goToPictures" class="btn clear" href="#">Regresar</a>
+
+				<div class="tools">
+					<input id="pLink" type="text" placeholder="Url de la imágen" />
+					<a id="goToPicture" class="btn" href="#">Ver en tamaño completo</a>
+					<a id="goToPictures" class="btn clear" href="#">Regresar</a>
+				</div>
 
 				<iframe id="fbComments" name="fbComments"></iframe>
 			</div>

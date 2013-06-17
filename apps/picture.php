@@ -8,9 +8,14 @@ $pic = new Pics ();
 $p = isset($_GET['p']) ? $_GET['p'] : 'not';
 
 if ($p != 'not') {
-	$picture = $pic->printImg($p);
+	if (isset($_GET['thumb'])) {
+		$path = $pic->consult('path', $p);
+		thumbImg('../pictures/' . $path, 200);
+	}else{
+		$picture = $pic->printImg($p);
 
-	header('Content-type: image/' . $picture['ext']);
-	echo $picture['code'];
+		header('Content-type: ' . $picture['mimetype']);
+		echo $picture['code'];
+	}
 }
 ?>

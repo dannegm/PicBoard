@@ -52,28 +52,64 @@ class Pics
 		if ($get_data = $conexion->query($query)){
 			$res = Array();
 			while($result = $get_data->fetch_assoc()){
-
-				if ($key == 'picture') {
-					$user = new Users ();
-					$author = $user->getUser($result['author']);
-				}else{
-					$author = $result['author'];
+				if($result['status'] == '1'){
+					if ($key == 'picture') {
+						$user = new Users ();
+						$author = $user->getUser($result['author']);
+					}else{
+						$author = $result['author'];
+					}
+					$res[] = Array(
+						'index' => $result['id'],
+						'id' => $result['uid'],
+						'author' => $author,
+						'date' => $result['date'],
+					//	'path' => $result['path'],
+					//	'content' => $result['content'],
+						'md5' => $result['md5'],
+						'mimetype' => $result['mimetype'],
+						'width' => $result['width'],
+						'height' => $result['height']
+					//	'prints' => $result['prints']
+					);
 				}
-				$res[] = Array(
-					'index' => $result['id'],
-					'id' => $result['uid'],
-					'author' => $author,
-					'date' => $result['date'],
-				//	'path' => $result['path'],
-				//	'content' => $result['content'],
-					'md5' => $result['md5'],
-					'mimetype' => $result['mimetype'],
-					'width' => $result['width'],
-					'height' => $result['height']
-				//	'prints' => $result['prints']
-				);
 			}
 			return $res;
+		}
+	}
+
+	public function update_master_values () {
+		$conexion = $this->_mysqli;
+		$query = "SELECT * FROM `{$this->_tb_pics}` ORDER BY `id` DESC";
+
+		$conexion = $this->_mysqli;
+		if ($get_data = $conexion->query($query)){
+			$res = Array();
+			while($result = $get_data->fetch_assoc()){
+				$uid = $result['uid'];
+				$path = $result['path'];
+
+				$filename = "../pictures/" . $path;
+				$infPic = getimagesize( $filename );
+				list($width, $height) = $infPic;
+				$mime = $infPic['mime'];
+
+				$up_query = "UPDATE `{$this->_tb_pics}` SET `width` = ?, `height` = ?, `mimetype` = ? WHERE `uid` = '{$uid}'";
+				$up = $conexion->prepare($up_query);
+
+				$up->bind_param ( 'sss', $width, $height, $mime );
+				$upd = $up->execute();
+
+
+				if ( !$upd ) {
+					$this->_error = "{$this->_error};{$uid}";
+				}
+			}
+			if ($this->_error == "No hay error") {
+				return true;
+			}else{
+				return false;
+			}
 		}
 	}
 
@@ -119,14 +155,16 @@ class Pics
 		session_start();
 		$author = $_SESSION['fbId'];
 
+		$status = '1';
+
 		if ($content != '') {
 			$find = $this->_exist($md5);
 			if (!$find){
-				$query = "INSERT INTO `{$this->_tb_pics}` (`uid`, `path`, `date`, `content`, `md5`, `author`, `width`, `height`, `mimetype`)"
-					. "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+				$query = "INSERT INTO `{$this->_tb_pics}` (`uid`, `path`, `date`, `content`, `md5`, `author`, `width`, `height`, `mimetype`, `status`)"
+					. "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 				;
 				$ins = $conexion->prepare($query);
-				$ins->bind_param( 'sssssssss', $uid, $uri, $date, $content, $md5, $author, $width, $height, $mime);
+				$ins->bind_param( 'ssssssssss', $uid, $uri, $date, $content, $md5, $author, $width, $height, $mime, $status);
 				$insert = $ins->execute();
 
 				if ( !$insert ) {
@@ -151,13 +189,14 @@ class Pics
 			$ext = explode('.', $ext);
 			$ext = end($ext);
 			$ext = strtolower($ext);
-			if ($ext == 'jpg') { $ext = 'jpeg'; }
+		$mime = $this->consult('mimetype', $uid);
 
 		$picture = $this->consult('content', $uid);
 			$picture = base64_decode($picture);
 
 		return Array(
 			'ext' => $ext,
+			'mimetype' => $mime,
 			'code' => $picture
 		);
 	}
