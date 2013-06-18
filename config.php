@@ -17,5 +17,6 @@
 	//Base de datos
 	define("tb_pics", "pics");
 	define("tb_users", "users");
+	define("tb_comments", "comments");
 
 ?>

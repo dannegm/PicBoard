@@ -188,9 +188,17 @@ function buildUpload (files) {
 					}, function (r) {
 						console.log(r);
 					});
+				/*	FB.api(
+						'https://graph.facebook.com/me/picboard:upload',
+						'post', {
+							object: cdomain + '#/viewer/' + res[2],
+							picture: "http://samples.ogp.me/154050731445725",
+							image: cdomain + res[2]
+						}, function(r) {
+							console.log(r);
+						}); */
 
 					goToPictures();
-					buildUser();
 				}else{
 					if (res[1] == '1'){
 						addUploadImg(picture, false);

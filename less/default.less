@@ -420,9 +420,14 @@ form {
 					opacity: .5;
 				}
 			}
-			#gifloading {
-				background: #fff url('../img/loader.gif') center no-repeat !important;
-			}
+		}
+		#gifloading {
+			background: #fff url('../img/loader.gif') center no-repeat !important;
+			display: block;
+			overflow: hidden;
+			width: 20%;
+			box-sizing: border-box;
+			.transition( all .3s );
 		}
 	}
 }
