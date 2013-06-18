@@ -37,8 +37,7 @@ function buildUser () {
 function login (){
 	function doLogin (){
 		FB.api('/me', function(user){
-			var fbAuth = FB.getAuthResponse(),
-				fbGraph = 'https://graph.facebook.com/' + fbId + '?access_token=' + fbToken;
+			var fbAuth = FB.getAuthResponse();
 				fbId = fbAuth.userID;
 				fbToken = fbAuth.accessToken;
 
@@ -188,15 +187,15 @@ function buildUpload (files) {
 					}, function (r) {
 						console.log(r);
 					});
-				/*	FB.api(
+					FB.api(
 						'https://graph.facebook.com/me/picboard:upload',
 						'post', {
 							object: cdomain + '#/viewer/' + res[2],
-							picture: "http://samples.ogp.me/154050731445725",
+							picture: cdomain + res[2] + '?thumb',
 							image: cdomain + res[2]
 						}, function(r) {
 							console.log(r);
-						}); */
+						});
 
 					goToPictures();
 				}else{
