@@ -1,10 +1,17 @@
 <?php
 	$domain = "http://dannegm.pro/picboard/";
+	$p = isset($_GET['p']) ? $_GET['p'] : 'not';
 ?>
 <!doctype html>
 <!-- [ Power By Dannegm (c) 2013 - http://dannegm.pro ] -->
 <html lang="en">
-<head>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# picboard: http://ogp.me/ns/fb/picboard#">
+        
+	<meta property="fb:app_id" content="152670424917089" />
+	<meta property="og:image" content="http://dannegm.pro/picboard/p/<?php echo $p; ?>?thumb" />
+	<meta property="og:url" content="http://dannegm.pro/picboard/#/viewer/<?php echo $p; ?>" />
+	<meta property="og:type" content="picboard:picture" />
+
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -39,7 +46,7 @@
 </script>
 
 	<header>
-		<h1><a href="<?php echo $domain; ?>">Dannegm</a></h1>
+		<h1><a href="http://dannegm.com">Dannegm</a></h1>
 		<h2>PicBoard</h2>
 		<ul>
 			<li id="goToHome" class="active">Inicio</li>
@@ -120,7 +127,12 @@
 					<a id="goToPictures" class="btn clear" href="#">Regresar</a>
 				</div>
 
-				<iframe id="fbComments" name="fbComments"></iframe>
+				<form id="cForm">
+					<img id="muPictureForm" src="#" />
+					<p id="cContent" contenteditable>Comenta ésta imagen...</p>
+				</form>
+				<section id="comments">
+				</section>
 			</div>
 		</article>
 

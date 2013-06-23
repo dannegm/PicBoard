@@ -188,11 +188,10 @@ function buildUpload (files) {
 						console.log(r);
 					});
 					FB.api(
-						'https://graph.facebook.com/me/picboard:upload',
+						'me/picboard:upload',
 						'post', {
-							object: cdomain + '#/viewer/' + res[2],
-							picture: cdomain + res[2] + '?thumb',
-							image: cdomain + res[2]
+							type: 'picboard:picture',
+							picture: cdomain + '#/viewer/' + res[2]
 						}, function(r) {
 							console.log(r);
 						});
@@ -284,6 +283,7 @@ function goToPicture (picId){
 				date = res[0].date;
 
 			$('#muPicture').attr('src', 'http://graph.facebook.com/' + res[0].author.fbId + '/picture?type=large');
+			$('#muPictureForm').attr('src', 'http://graph.facebook.com/' + fbId + '/picture');
 			$('#muName').text(res[0].author.name);
 			$('.miniProfile').attr('rel', res[0].author.fbId);
 
@@ -312,7 +312,13 @@ function goToPicture (picId){
 			var formatDate = 'El ' + diasem + ' ' + dia + ' de ' + mes + ' del ' + year;
 			$('#pDate').text(formatDate);
 
-			$('#fbComments').attr('src', 'apps/fbComments.php?uid=' + uid);
+			$('#cContent').attr('rel', uid);
+			$('#comments').html('');
+			var comment = res[0].comments;
+			for (x in comment) {
+				var tmp = '<article><img src="http://graph.facebook.com/' + comment[x].author.fbId + '/picture" /><p><strong>' + comment[x].author.name + '</strong><span>' + comment[x].content + '</span></p></article>';
+				$('#comments').prepend(tmp);
+			}
 
 			window.history.pushState('viewer', 'Dannegm Picboard', '/picboard/#/viewer/' + uid);
 
@@ -320,6 +326,15 @@ function goToPicture (picId){
 			$('#picture').fadeIn();
 			$('html, body').scrollTop(0);
 			$('header ul li').removeClass('active');
+
+			$('#cContent').focus(function(){
+				$(this).html('');
+			});
+			$('#cContent').blur(function(){
+				if ( $(this).html() == '' ){
+					$(this).html('Comenta ésta imagen...');
+				}
+			});
 		});
 }
 function goToPictures (){
@@ -352,6 +367,8 @@ function run () {
 		var picIdn = thisDomain.split('/').reverse();
 		thisPic = picIdn[0];
 		goToPicture(picIdn[0]);
+
+		$('#noLogin').hide();
 	}
 
 	$('#goToHome').live('click', function(e){
@@ -366,6 +383,10 @@ function run () {
 
 		$('header ul li').removeClass('active');
 		$(this).addClass('active');
+
+		if ( $('body').hasClass('noSidebar') ) {
+			$('#noLogin').show();
+		}
 	});
 	$('#goToProfile').live('click', function(e){
 		e.preventDefault();
@@ -392,6 +413,10 @@ function run () {
 		e.preventDefault();
 		goToPictures();
 		$('header ul li').removeClass('active');
+
+		if ( $('body').hasClass('noSidebar') ) {
+			$('#noLogin').show();
+		}
 	});
 	$('.viewProfile').live('click', function(e){
 		e.preventDefault();
@@ -418,6 +443,29 @@ function run () {
 		jsonValue = pUser.fbId;
 		list_pictures();
 		goToPictures();
+	});
+
+	$('#cContent').keypress(function(e){
+		var key = e.keyCode;
+		if(!e.shiftKey){
+			if (key == '13'){
+				$.post('apps/comment.php', {
+					'do': 'it',
+					'pic': $(this).attr('rel'),
+					'content': $('#cContent').text()
+				}, function(re){
+					var res = re.split(':');
+					if (res[0] == '1'){
+						var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>Yo</strong><span>' + $('#cContent').text() + '</span></p></article>';
+						$('#comments').prepend(tmp);
+						$('#cContent').html('');
+					}else{
+						alert(res[2]);
+					}
+					console.log(re);
+				});
+			}
+		}
 	});
 
 	$(window).scroll(scroll_loaded);

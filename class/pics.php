@@ -54,11 +54,16 @@ class Pics
 			$res = Array();
 			while($result = $get_data->fetch_assoc()){
 				if($result['status'] == '1'){
+
+					$Comments = new Comments ();
+					
 					if ($key == 'picture') {
 						$user = new Users ();
 						$author = $user->getUser($result['author']);
+						$Comments = $Comments->getComments($result['uid']);
 					}else{
 						$author = $result['author'];
+						$Comments = $Comments->count($result['uid']);
 					}
 					$res[] = Array(
 						'index' => $result['id'],
@@ -70,7 +75,8 @@ class Pics
 						'md5' => $result['md5'],
 						'mimetype' => $result['mimetype'],
 						'width' => $result['width'],
-						'height' => $result['height']
+						'height' => $result['height'],
+						'comments' => $Comments
 					//	'prints' => $result['prints']
 					);
 				}
@@ -129,7 +135,7 @@ class Pics
 	public function upload ($pic) {
 		$conexion = $this->_mysqli;
 
-		$uid = genKey("uid");
+		$uid = genKey();
 			$this->_uid = $uid;
 
 		$ext = explode('.', $pic['name']);

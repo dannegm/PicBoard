@@ -1,5 +1,5 @@
 <?php
-class Users
+class Comments
 {
 	private $_uid;
 
@@ -8,6 +8,7 @@ class Users
 	private $_db_pass = db_password;
 	private $_db_bdata = db_bdata;
 	private $_tb_comments = tb_comments;
+	private $_tb_users = tb_users;
 
 	private $_mysqli;
 	private $_error = "No hay error";
@@ -36,29 +37,37 @@ class Users
 		$query = "SELECT * FROM `{$this->_tb_comments}` WHERE `picture` = '{$who}'";
 
 		if ($get_data = $conexion->query($query)){
+			$res = Array();
 			while($result = $get_data->fetch_assoc()){
 				if ( $result['status'] == '1') {
 
-					$user = new Users ();
-					$author = $user->getUser($result['author']);
+					$author = '';
+					$aquery = "SELECT * FROM `{$this->_tb_users}` WHERE `fbId` = '{$result['author']}'";
+					$aget_data = $conexion->query($aquery);
+					while($aresult = $aget_data->fetch_assoc()){
+						$author = Array(
+							'fbId' => $aresult['fbid'],
+							'name' => $aresult['name']
+						);
+					}
 
-					$res = Array(
+					$res[] = Array(
 						'index' => $result['id'],
 						'uid' => $result['uid'],
 						'content' => $result['content'],
 						'date' => $result['date'],
 						'author' => $author
 					);
-					return $res;
 				}
 			}
+			return $res;
 		}
 	}
 
-	private function comment ($who, $content) {
+	public function comment ($who, $content) {
 		$conexion = $this->_mysqli;
 
-		$uid = genKey("uid");
+		$uid = genKey();
 			$this->_uid = $uid;
 
 		session_start();
@@ -82,5 +91,13 @@ class Users
 		}else{
 			return true;
 		}
+	}
+
+	public function count ($who) {
+		$conexion = $this->_mysqli;
+		$sql = "SELECT * FROM `{$this->_tb_comments}` WHERE `picture` = '{$who}'";
+		$conexion->query($sql);
+		$_count = $conexion->affected_rows;
+		return $_count;
 	}
 }
