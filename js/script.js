@@ -40,10 +40,6 @@ function login (){
 			var fbAuth = FB.getAuthResponse();
 				fbId = fbAuth.userID;
 				fbToken = fbAuth.accessToken;
-
-				if ( thisDomain.match(/viewer/i) ){
-					window.fbComments.location.reload();
-				}
 				buildUser();
 		});
 	}
