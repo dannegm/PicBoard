@@ -231,6 +231,18 @@ class Pics
 		}
 	}
 
+	public function exist ($who) {
+		$conexion = $this->_mysqli;
+		$sql = "SELECT * FROM `{$this->_tb_pics}` WHERE `uid` = '{$who}'";
+		$conexion->query($sql);
+		$n = $conexion->affected_rows;
+		if ($n > 0) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public function count ($who) {
 		$conexion = $this->_mysqli;
 		$sql = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$who}'";
