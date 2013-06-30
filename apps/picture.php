@@ -12,13 +12,11 @@ $p = isset($_GET['p']) ? $_GET['p'] : 'not';
 if ($pic->exist($p)) {
 	if (isset($_GET['thumb'])) {
 
-		$path = $pic->consult('path', $p);
-		thumbImg('../pictures/' . $path, 200);
-
+		$pic->getThumb($p);
+		
 	}elseif (isset($_GET['info'])) {
 
-		$json = $pic->listar('picture', $p, false);
-		$json = $json[0];
+		$json = $pic->getInfo($p);
 		$json = json_encode($json);
 
 		header('Content-type: text/javascript');

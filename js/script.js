@@ -41,6 +41,9 @@ function login (){
 				fbId = fbAuth.userID;
 				fbToken = fbAuth.accessToken;
 				buildUser();
+				if ( !thisDomain.match(/viewer/i) ){
+					reload_pictures();
+				}
 		});
 	}
 	function chkLogin (resp) {
@@ -210,7 +213,7 @@ function buildUpload (files) {
 function addUploadImg (src, uid){
 	$('#preview').attr('src', src).fadeIn();
 	if (uid){
-		$('#pictures').prepend('<li class="gotopic" id="' + uid + '" rel="' + uid + '"><img src="' + cdomain + uid + '?thumb"/></li>');
+		$('#pictures').prepend('<li id="' + uid + '" rel="' + uid + '"><button class="del" rel="' + uid + '"></button><img class="gotopic" rel="' + uid + '" src="' + cdomain + uid + '?thumb"/></li>');
 		$('#' + uid).addClass('in');
 	}
 }
@@ -222,13 +225,36 @@ function list_pictures () {
 		function (res){
 			$('#pictures').append('<li id="gifloading"></li>');
 			for(x in res){
-				var tmp = '<li class="gotopic" id="' + res[x].id + '" rel="' + res[x].id + '"><img src="' + cdomain + res[x].id + '?thumb"/></li>';
+				var btnDel = '';
+				if (res[x].author == fbId) { btnDel = '<button class="del" rel="' + res[x].id + '"></button>'; }
+				var tmp = '<li id="' + res[x].id + '" rel="' + res[x].id + '">' + btnDel + '<img class="gotopic" rel="' + res[x].id + '" src="' + cdomain + res[x].id + '?thumb"/></li>';
 				//$('#pictures').append(tmp);
 				$(tmp).insertBefore('#gifloading');
 			}
 			$('#gifloading').remove();
 		}
 	);
+}
+
+function reload_pictures () {
+	jsonStep = 1;
+	jsonKey = '';
+	jsonValue = '';
+	$('#pictures').html('');
+	list_pictures();
+}
+function delImg (e) {
+	e.preventDefault();
+	var thisPic = $(this).attr('rel');
+	var c = confirm('¿Estás seuguro de eliminar ésta imagen?');
+	if (c) {
+		$.post('apps/del.php', {
+			'pic': thisPic
+		}, function(r){
+			console.log(r);
+			$('li [rel="' + thisPic + '"]').remove();
+		});
+	}
 }
 function hasTargetBlank () {
 	$('a').attr('target', '_blank');
@@ -255,12 +281,7 @@ function scroll_loaded() {
 window.onpopstate = function(e) {
 	switch( e.state ){
 		case 'home':
-			jsonKey = '';
-			jsonValue = '';
-			jsonStep = 1;
-
-			$('#pictures').html('');
-			list_pictures();
+			reload_pictures();
 			goToPictures(); 
 			break;
 		case 'viewer': goToPicture(thisPic); break;
@@ -288,6 +309,8 @@ function goToPicture (picId){
 			$('#pPicture').attr('src', cdomain + uid);
 			$('#pLink').val(cdomain + uid);
 			$('#goToPicture').attr('href', cdomain + uid);
+
+			clickeableinput('#pLink');
 
 			var fecha = date.split(' ');
 			var diasem = parseInt( fecha[0] );
@@ -370,11 +393,7 @@ function run () {
 	$('#goToHome').live('click', function(e){
 		e.preventDefault();
 		buildUser();
-		jsonStep = 1;
-		jsonKey = '';
-		jsonValue = '';
-		$('#pictures').html('');
-		list_pictures();
+		reload_pictures();
 		goToPictures();
 
 		$('header ul li').removeClass('active');
@@ -463,6 +482,8 @@ function run () {
 			}
 		}
 	});
+
+	$('.del').live('click', delImg)
 
 	$(window).scroll(scroll_loaded);
 

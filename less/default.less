@@ -412,6 +412,18 @@ form {
 
 			.transition( all .3s );
 
+			.del {
+				position: absolute;
+				z-index: 99;
+				width: 40px;
+				height: 40px;
+				display: none;
+				border: none;
+				background: url('../img/ex.png') center no-repeat;
+				cursor: pointer;
+				background-color: rgba(255,255,255,.2);
+			}
+
 			img {
 				width: 100%;
 				display: block;
@@ -421,6 +433,9 @@ form {
 			&:hover {
 				img {
 					opacity: .5;
+				}
+				.del {
+					display: block;
 				}
 			}
 		}

@@ -43,46 +43,76 @@ class Pics
 		$offset = $step * 20;
 
 		switch ($key) {
-			case 'author': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$value}' ORDER BY `id` DESC LIMIT {$offset},20"; break;
+			case 'author': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$value}' AND `status` = '1' ORDER BY `id` DESC LIMIT {$offset},20"; break;
 			case 'picture': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `uid` = '{$value}'"; break;
-			case 'width': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `width` > '{$value}'"; break;
-			default: $query = "SELECT * FROM `{$this->_tb_pics}` ORDER BY `id` DESC LIMIT {$offset},20"; break;
+			case 'width': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `width` > '{$value}' AND `status` = '1' ORDER BY `id` DESC LIMIT {$offset},20"; break;
+			default: $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `status` = '1' ORDER BY `id` DESC LIMIT {$offset},20"; break;
 		}
 
 		$conexion = $this->_mysqli;
 		if ($get_data = $conexion->query($query)){
 			$res = Array();
 			while($result = $get_data->fetch_assoc()){
-				if($result['status'] == '1'){
-
-					$Comments = new Comments ();
-					
-					if ($key == 'picture') {
-						$user = new Users ();
-						$author = $user->getUser($result['author']);
-						$Comments = $Comments->getComments($result['uid']);
-					}else{
-						$author = $result['author'];
-						$Comments = $Comments->count($result['uid']);
-					}
-					$res[] = Array(
-						'index' => $result['id'],
-						'id' => $result['uid'],
-						'author' => $author,
-						'date' => $result['date'],
-					//	'path' => $result['path'],
-					//	'content' => $result['content'],
-						'md5' => $result['md5'],
-						'mimetype' => $result['mimetype'],
-						'width' => $result['width'],
-						'height' => $result['height'],
-						'comments' => $Comments
-					//	'prints' => $result['prints']
-					);
+				$Comments = new Comments ();
+				
+				if ($key == 'picture') {
+					$user = new Users ();
+					$author = $user->getUser($result['author']);
+					$Comments = $Comments->getComments($result['uid']);
+				}else{
+					$author = $result['author'];
+					$Comments = $Comments->count($result['uid']);
 				}
+				$res[] = Array(
+					'index' => $result['id'],
+					'id' => $result['uid'],
+					'author' => $author,
+					'date' => $result['date'],
+				//	'path' => $result['path'],
+				//	'content' => $result['content'],
+					'md5' => $result['md5'],
+					'mimetype' => $result['mimetype'],
+					'width' => $result['width'],
+					'height' => $result['height'],
+					'comments' => $Comments
+				//	'prints' => $result['prints']
+				);
 			}
 			return $res;
 		}
+	}
+
+	public function getInfo ($value) {
+		$conexion = $this->_mysqli;
+		$query = "SELECT * FROM `{$this->_tb_pics}` WHERE `uid` = '{$value}'";
+		$conexion = $this->_mysqli;
+		if ($get_data = $conexion->query($query)){
+			while($result = $get_data->fetch_assoc()){
+				$Comments = new Comments ();
+			
+				$user = new Users ();
+				$author = $user->getUser($result['author']);
+				$Comments = $Comments->getComments($result['uid']);
+
+				$res = Array(
+					'index' => $result['id'],
+					'id' => $result['uid'],
+					'author' => $author,
+					'date' => $result['date'],
+					'md5' => $result['md5'],
+					'mimetype' => $result['mimetype'],
+					'width' => $result['width'],
+					'height' => $result['height'],
+					'comments' => $Comments
+				);
+				return $res;
+			}
+		}
+	}
+
+	public function getThumb ($value) {
+		$path = $this->consult('path', $value);
+		thumbImg('../pictures/' . $path, 200);
 	}
 
 	public function update_master_values () {
@@ -218,6 +248,41 @@ class Pics
 		}
 	}
 
+	private function _update ($who, $what, $newVal) {
+		$conexion = $this->_mysqli;
+		$up_query = "UPDATE `{$this->_tb_pics}` SET `{$what}` = ? WHERE `uid` = '{$who}'";
+		$up = $conexion->prepare($up_query);
+
+		$up->bind_param ( 's', $newVal );
+		$upd = $up->execute();
+
+		if ( !$upd ) {
+			$this->_error = "No se pudo actualizar éste dato";
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public function del ($who) {
+		session_start();
+		$author = $_SESSION['fbId'];
+		$picAuthor = $this->consult('author', $who);
+
+		if ($picAuthor == $author){
+			$res = $this->_update($who, 'status', '0');
+			if ($res) {
+				return true;
+			}else{
+				$this->_error = "No se pudo eliminar ésta imagen";
+				return false;
+			}
+		}else{
+			$this->_error = "No tienes permisos para hacer ésto";
+			return false;
+		}
+	}
+
 	private function _exist ($who) {
 		$conexion = $this->_mysqli;
 		$sql = "SELECT * FROM `{$this->_tb_pics}` WHERE `md5` = '{$who}'";
@@ -245,7 +310,7 @@ class Pics
 
 	public function count ($who) {
 		$conexion = $this->_mysqli;
-		$sql = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$who}'";
+		$sql = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$who}' AND `status` = '1'";
 		$conexion->query($sql);
 		return $conexion->affected_rows;
 	}
