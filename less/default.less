@@ -6,11 +6,16 @@ body {
 	font-family: 'open_sansregular';
 }
 
+.center {
+	width: 960px;
+	margin: auto;
+}
+
 header {
 	background: #3b4453;
 	width: 100%;
 	overflow: hidden;
-	height: 63px;
+	height: 45px;
 
 	ul {
 		display: block;
@@ -20,31 +25,35 @@ header {
 		li {
 			display: block;
 			float: left;
-			padding: 20px 30px;
-			background: rgba(0,0,0,.2);
+			padding: 13px 20px;
+			background: rgba(0, 0, 0, 0.1);
 			color: #fff;
 			cursor: pointer;
-			font-size: 18px;
-			border-left: 1px solid rgba(255,255,255,.1);
+			font-size: 14px;
+			border-left: 1px solid rgba(0,0,0, 0.1);
 			.transition(all .3s);
 
 			&:hover {
-				background: rgba(255,255,255,.2);
+				background: rgba(255,255,255,.1);
 			}
 			&.active {
-				background: rgba(0,0,0,.5);
+				background: rgba(0,0,0,.3);
+			}
+			a {
+				color: #fff;
+				text-decoration: none;
 			}
 		}
 	}
 }
 h1 {
-	margin: 10px;
+	margin: 7px;
 	font-family: 'arkitechregular';
 	color: #58606d;
-	font-size: 32px;
-	text-shadow: -1px -1px rgba(0,0,0,.5);
+	font-size: 24px;
+	text-shadow: -1px -1px rgba(0, 0, 0, 0.5);
 	margin-bottom: -10px;
-	float:left;
+	float: left;
 
 	a {
 		color: #58606d;
@@ -57,11 +66,11 @@ h1 {
 	}
 }
 h2 {
-	margin: 14px;
+	margin: 7px;
 	color: #fff;
 	font-weight: normal;
-	text-shadow: 1px 1px rgba(0,0,0,.3);
-	font-size: 26px;
+	text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+	font-size: 23px;
 	float: left;
 	margin-right: 30px;
 }
@@ -304,14 +313,7 @@ input {
 		.tools {
 			overflow: hidden;
 			display: block;
-		}
-		#fbComments {
-			width: 450px;
-			margin: 0;
-			margin-top: 10px;
-			border: 0;
-			padding: 0;
-			min-height: 200px;
+			margin-bottom: 5px;
 		}
 	}
 }
@@ -450,6 +452,34 @@ form {
 	}
 }
 
+.viewer {
+	h1 {
+		margin-left: 0;
+		padding-left: 0;
+	}
+	#container {
+		.center;
+		margin-top: 20px;
+		margin-bottom: 50px;
+		min-height: 0px !important;
+		overflow: hidden;
+		border: 1px solid #D3D6DB;
+		box-shadow: 0px 0px 1px darken(#E9EAED, 5%);
+		border-radius: 3px;
+
+		#picture {
+			margin: 20px;
+
+			& > figure {
+				margin-bottom: 0;
+			}
+			div {
+				min-width: 0px;
+			}
+		}
+	}
+}
+
 .noSidebar {
 	#sidebar {
 		width: 0;
@@ -467,7 +497,7 @@ form {
 
 #noLogin {
 	position: fixed;
-	top: 63px;
+	top: 45px;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -539,6 +569,12 @@ form {
 
 			strong {
 				display: block;
+			}
+			time {
+				display: inline;
+				font-size: 12px;
+				font-weight: normal;
+				color: #444;
 			}
 			span {
 				display: block;
