@@ -47,7 +47,7 @@ function login (){
 					if (resp.authResponse) {
 						doLogin();
 					}
-				}, {scope: 'email, publish_actions'});
+				}, {scope: 'email, publish_actions, manage_notifications'});
 			});
 		}
 	}
@@ -348,11 +348,10 @@ function goToPicture (picId){
 					cMi = cHora[1],
 					cMe = cHora[3];
 
-
 				var cFormatDate = cDia + ' de ' + cMes + ' del ' + cAno + ' a las ' + cHr + ':' + cMi + cMe;
 
-
-				var tmp = '<article><img src="http://graph.facebook.com/' + comment[x].author.fbId + '/picture" /><p><strong>' + comment[x].author.name + ' <time>' + cFormatDate + '</time></strong><span>' + comment[x].content + '</span></p></article>';
+				var content = comment[x].content;
+				var tmp = '<article><img src="http://graph.facebook.com/' + comment[x].author.fbId + '/picture" /><p><strong>' + comment[x].author.name + ' <time>' + cFormatDate + '</time></strong><span>' + content + '</span></p></article>';
 				$('#comments').prepend(tmp);
 			}
 

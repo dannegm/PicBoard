@@ -1,4 +1,29 @@
 <?php
+	include_once('config.php');
+	include_once('php/facebook.php');
+	include_once('php/functions.php');
+	include_once('class/pics.php');
+	include_once('class/users.php');
+	include_once('class/comments.php');
+
+	error_reporting(0);
+
+	$config = array(
+		'appId' => '152670424917089',
+		'secret' => '16551a9e1ea9ba03d341026f0807b819'
+	);
+	$facebook = new Facebook($config);
+	$fbId = $facebook->getUser();
+	$fbToken = $facebook->getAccessToken();
+
+	$user = new Users ();
+	$user->login( $fbId );
+
+	$cForm = '';
+	if ($fbId) {
+		$cForm = "<form id=\"cForm\"><img id=\"muPictureForm\" src=\"http://graph.facebook.com/{$fbId}/picture?type=large\" /><p id=\"cContent\" contenteditable>Comenta ésta imagen...</p></form>";
+	}
+
 	$domain = "http://dannegm.pro/picboard/";
 	$p = isset($_GET['p']) ? $_GET['p'] : 'DRUStktZ';
 
@@ -55,10 +80,15 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# picboard: http://ogp.me/ns/fb/picboard#">
         
 	<meta property="fb:app_id" content="152670424917089" />
-	<meta property="og:title" content="Sample Picture" />
+
+	<meta property="og:type" content="picboard:picture" />
+	<meta property="og:site_name" content="Dannegm Picboard" />
+
 	<meta property="og:image" content="http://dannegm.pro/picboard/<?php echo $p; ?>?thumb" />
 	<meta property="og:url" content="http://dannegm.pro/picboard/viewer/<?php echo $p; ?>" />
-	<meta property="og:type" content="picboard:picture" />
+
+	<meta property="og:title" content="" />
+	<meta property="og:description" content="Imagen de <?php echo $pic->author->name; ?> en Picboard" />
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width" />
@@ -69,7 +99,6 @@
 
 	<script src="<?php echo $domain; ?>js/jquery.min.js"></script>
 	<script src="<?php echo $domain; ?>js/less.min.js"></script>
-	<script src="<?php echo $domain; ?>js/script.js"></script>
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -78,6 +107,60 @@
 
 		ga('create', 'UA-30390599-3', 'dannegm.pro');
 		ga('send', 'pageview');
+
+		var fbId = '<?php echo $fbId; ?>',
+			cdomain = 'http://dannegm.pro/picboard/';
+		function init () {
+			$('#cContent').focus(function(){
+				$(this).html('');
+			});
+			$('#cContent').blur(function(){
+				if ( $(this).html() == '' ){
+					$(this).html('Comenta ésta imagen...');
+				}
+			});
+			$('#cContent').keypress(function(e){
+				var key = e.keyCode;
+				if(!e.shiftKey){
+					if (key == '13'){
+						e.preventDefault();
+						$.post(cdomain + 'apps/comment.php', {
+							'do': 'it',
+							'pic': '<?php echo $p; ?>',
+							'user': fbId,
+							'content': $('#cContent').text()
+						}, function(re){
+							var res = re.split(':');
+							if (res[0] != '0'){
+
+							<?php
+								/*
+								// Esto es para notificaciones peeeeeeero!... necesitaos el acces token de @author
+
+								var
+									fbToke = '<?php echo $fbToken; ?>';
+									url = 'https://graph.facebook.com/<?php echo $pic->author->fbId; ?>/notifications',
+									params = {
+										'access_token': fbToke,
+										'href': 'viewer.php/<?php echo $p; ?>',
+										'template': '@[' + fbId + '] ha comentado tu foto en Picboard'
+									};
+								$.post(url, params, console.log);*/
+							?>
+
+								var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>' + res[2] + '</strong><span>' + res[3] + '</span></p></article>';
+								$('#comments').prepend(tmp);
+								$('#cContent').html('');
+							}else{
+								alert(re);
+							}
+							console.log(re);
+						});
+					}
+				}
+			});
+		}
+		$(document).ready(init);
 	</script>
 </head>
 <body class="viewer">
@@ -111,12 +194,19 @@
 					<input id="pLink" type="text" placeholder="Url de la imágen" value="<?php echo $domain . $p; ?>" />
 					<a class="btn" href="<?php echo $domain . $p; ?>" target="_blank">Ver en tamaño completo</a>
 				</div>
+
+				<?php echo $cForm; ?>
+
 				<section id="comments">
 
 <?php
-	foreach ($pic->comments as $comment) {
+	$comments = array_reverse($pic->comments);
+	foreach ($comments as $comment) {
 		$FormatDate = format_date_hr($comment->date);
-		$tmp = "<article><img src=\"http://graph.facebook.com/{$comment->author->fbId}/picture\" /><p><strong>{$comment->author->name} <time>{$FormatDate}</time></strong><span>{$comment->content}</span></p></article>";
+
+		$content = $comment->content;
+			$content = str_replace('[s]', '<br />', $content);
+		$tmp = "<article><img src=\"http://graph.facebook.com/{$comment->author->fbId}/picture\" /><p><strong>{$comment->author->name} <time>{$FormatDate}</time></strong><span>{$content}</span></p></article>";
 		echo $tmp;
 	}
 ?>
@@ -124,6 +214,9 @@
 				</section>
 			</div>
 		</article>
+		<p>
+			<span>Proyecto desarollodado por <a href="http://github.com/dannegm">@dannegm</a>, no se te olvide seguir el proyecto en <a href="https://github.com/dannegm/PicBoard/" target="_blank">github</a>.</span>
+		</p>
 	</section>
 </body>
 </html>

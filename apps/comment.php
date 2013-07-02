@@ -17,17 +17,15 @@ if ($do != 'not') {
 	$user = $u->getUser($user);
 	$name = $user['name'];
 
-	if (strip_tags($content) != $content) {
-		$content = "Hola, soy {$name}, soy un noob y quiero volar...\n<br />\n<img src=\"http://dannegm.pro/picboard/genius\" />";
-		$ccomment = $c->comment($pic, $content);
-		echo '2:' . $pic . ':' . $name . ':' . $content; //Code 2: Intento XSS
+	$content = str_replace('<3', '♥', $content);
+
+	$content = strip_tags($content);
+	$ccomment = $c->comment($pic, $content);
+
+	if ($ccomment) {
+		echo '1:' . $pic . ':' . $name . ':' . $content;
 	}else{
-		$ccomment = $c->comment($pic, $content);
-		if ($ccomment) {
-			echo '1:' . $pic . ':' . $name . ':' . $content;
-		}else{
-			echo '0:' . $pic . ':' . $c->error();
-		}
+		echo '0:' . $pic . ':' . $c->error();
 	}
 }
 ?>
