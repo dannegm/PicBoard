@@ -7,24 +7,45 @@ function genKey () {
 	}
 	return $key;
 }
-function formatDate ($date) {
-	$fecha = explode(' ', $date);
-	$diasem = (int) $fecha[0];
+function format_date ($date) {
+	$date = explode(' ', $date);
+	$diasem = (int) $date[0];
 
-	$fecha = explode('-', $fecha[1]);
-	$dia = $fecha[0];
-	$mes = (int) $fecha[1];
-	$year = $fecha[2];
+	$fecha = explode('-', $date[1]);
+		$dia = $fecha[0];
+		$mes = (int) $fecha[1];
+		$year = $fecha[2];
 
 	$tMes = 'nohay enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre';
-	$tDia = 'doming lunes martes miércoles jueves viernes sábado';
-	$tMes = explode(' ', $tMes);
-	$tDia = explode(' ', $tDia);
+	$tDia = 'domingo lunes martes miércoles jueves viernes sábado';
+		$tMes = explode(' ', $tMes);
+		$tDia = explode(' ', $tDia);
 
-	$diasem = $tDia[$diasem];
-	$mes = $tMes[$mes];
+		$diasem = $tDia[$diasem];
+		$mes = $tMes[$mes];
 
-	return "El {$diasem} {$dia} de {$mes} del {$year}";
+	$formatDate = 'El ' . $diasem . ' ' . $dia . ' de ' . $mes . ' del ' . $year;
+	return $formatDate;
+}
+function format_date_hr ($date) {
+	$date = explode(' ', $date);
+
+	$fecha = explode('-', $date[1]);
+		$dia = $fecha[0];
+		$mes = (int) $fecha[1];
+		$year = $fecha[2];
+
+	$tMes = 'nohay ene feb mar abr may jun jul ago sep oct nov dic';
+		$tMes = explode(' ', $tMes);
+		$mes = $tMes[$mes];
+
+	$hora = explode(':', $date[2]);
+		$Hr = $hora[0];
+		$Mi = $hora[1];
+		$Me = $hora[3];
+
+	$formatDate = $dia . ' de ' . $mes . ' del ' . $year . ' a las ' . $Hr . ':' . $Mi . $Me;
+	return $formatDate;
 }
 function thumbImg ($img, $size = 200) {
 

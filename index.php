@@ -132,5 +132,46 @@
 		<ul id="pictures">
 		</ul>
 	</section>
+
+	<section id="about">
+		<div class="center">
+			<h3>Bienvenido a picboard</h3>
+			<p>Picboard es un servicio gratuito para hospedar imágenes, único en su especie gracias a su sencilla interfaz y facilidad de uso. En pocos pasos podrás compartir imágenes en toda la internet.</p>
+
+			<figure class="steps">
+				<figcaption>
+					<h4><span class="dot">1</span><span class="txt">Logueate con facebook</span></h4>
+					<p>Descuida, sólo queremos saber tu nombre y que compartas con tus amigos tu imagen.</p>
+				</figcaption>
+				<img src="img/screen_1.png" />
+			</figure>
+			<figure class="steps">
+				<figcaption>
+					<h4><span class="dot">2</span><span class="txt">Elige tu imagen</span></h4>
+					<p>Esa que tanto te gusta y quisieras compartir con todo el mundo.</p>
+				</figcaption>
+				<img src="img/screen_2.png" />
+			</figure>
+			<figure class="steps">
+				<figcaption>
+					<h4><span class="dot">3</span><span class="txt">Arrastra tu imagen a la aplicación</span></h4>
+					<p>O pica en el boton para buscar tu imagen, enseguida de ésto se comenzará a subir.</p>
+				</figcaption>
+				<img src="img/screen_3.png" />
+			</figure>
+			<figure class="steps">
+				<figcaption>
+					<h4><span class="dot">4</span><span class="txt">Copia y comparte</span></h4>
+					<p>Así de facil es compartir una imagen en <strong>Picboard</strong>.</p>
+				</figcaption>
+				<img src="img/screen_4.png" />
+			</figure>
+
+
+			<footer>
+				<p>Proyecto desarollodado por <a href="http://github.com/dannegm">@dannegm</a>, no se te olvide seguir el proyecto en <a href="https://github.com/dannegm/PicBoard/" target="_blank">github</a>.</p>
+			</footer>
+		</div>
+	</section>
 </body>
 </html>
