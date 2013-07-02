@@ -17,7 +17,7 @@
 	$fbToken = $facebook->getAccessToken();
 
 	$user = new Users ();
-	$user->login( $fbId );
+	$user->login( $fbId, $fbToken );
 
 	$cForm = '';
 	if ($fbId) {
@@ -33,46 +33,8 @@
 	$pic = file_get_contents($domain . $p . '?info');
 		$pic = json_decode($pic);
 
-	function format_date ($date) {
-		$date = explode(' ', $date);
-		$diasem = (int) $date[0];
-
-		$fecha = explode('-', $date[1]);
-			$dia = $fecha[0];
-			$mes = (int) $fecha[1];
-			$year = $fecha[2];
-
-		$tMes = 'nohay enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre';
-		$tDia = 'domingo lunes martes miércoles jueves viernes sábado';
-			$tMes = explode(' ', $tMes);
-			$tDia = explode(' ', $tDia);
-
-			$diasem = $tDia[$diasem];
-			$mes = $tMes[$mes];
-
-		$formatDate = 'El ' . $diasem . ' ' . $dia . ' de ' . $mes . ' del ' . $year;
-		return $formatDate;
-	}
-	function format_date_hr ($date) {
-		$date = explode(' ', $date);
-
-		$fecha = explode('-', $date[1]);
-			$dia = $fecha[0];
-			$mes = (int) $fecha[1];
-			$year = $fecha[2];
-
-		$tMes = 'nohay ene feb mar abr may jun jul ago sep oct nov dic';
-			$tMes = explode(' ', $tMes);
-			$mes = $tMes[$mes];
-
-		$hora = explode(':', $date[2]);
-			$Hr = $hora[0];
-			$Mi = $hora[1];
-			$Me = $hora[3];
-
-		$formatDate = $dia . ' de ' . $mes . ' del ' . $year . ' a las ' . $Hr . ':' . $Mi . $Me;
-		return $formatDate;
-	}
+	$authorID = $pic->author->fbId;
+	$authorToken = $user->getAccessToken($authorID);
 ?>
 <!doctype html>
 <!-- [ Power By Dannegm (c) 2013 - http://dannegm.pro ] -->
@@ -133,20 +95,18 @@
 							var res = re.split(':');
 							if (res[0] != '0'){
 
-							<?php
-								/*
-								// Esto es para notificaciones peeeeeeero!... necesitaos el acces token de @author
-
+<?php /*
 								var
-									fbToke = '<?php echo $fbToken; ?>';
+									fbToken = '<?php echo $authorToken; ?>';
 									url = 'https://graph.facebook.com/<?php echo $pic->author->fbId; ?>/notifications',
 									params = {
-										'access_token': fbToke,
+										'access_token': fbToken,
 										'href': 'viewer.php/<?php echo $p; ?>',
 										'template': '@[' + fbId + '] ha comentado tu foto en Picboard'
 									};
-								$.post(url, params, console.log);*/
-							?>
+								$.post(url, params, console.log);
+
+*/ ?>
 
 								var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>' + res[2] + '</strong><span>' + res[3] + '</span></p></article>';
 								$('#comments').prepend(tmp);

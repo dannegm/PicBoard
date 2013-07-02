@@ -54,22 +54,59 @@ class Users
 		}
 	}
 
-	public function login ($who) {
-		$isRegister = $this->_exist($who);
-		if ($isRegister) {
-			session_start();
-			$_SESSION['fbId'] = $who;
-			$user = $this->getUser($who);
-			return $user;
-		} else {
-			$doRegister = $this->register($who);
-			if ($doRegister) {
-				session_start();
-				$_SESSION['fbId'] = $who;
-				$user = $this->getUser($who);
-				return $user;
+	private function _consult ($what, $who) {
+		$query = "SELECT `{$what}` FROM `{$this->_tb_users}` WHERE `fbid` = '{$who}'";
+		$conexion = $this->_mysqli;
+		if ($get_data = $conexion->query($query)){
+			while($result = $get_data->fetch_assoc()){
+				return $result[$what];
 			}
 		}
+	}
+
+	public function getAccessToken ($who) {
+		return $this->_consult('fbToken', $who);
+	}
+
+	private function _update ($who, $what, $newVal) {
+		$conexion = $this->_mysqli;
+		$up_query = "UPDATE `{$this->_tb_users}` SET `{$what}` = ? WHERE `fbid` = '{$who}'";
+		$up = $conexion->prepare($up_query);
+
+		$up->bind_param ( 's', $newVal );
+		$upd = $up->execute();
+
+		if ( !$upd ) {
+			$this->_error = "No se pudo actualizar éste dato";
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public function login ($who, $token) {
+		$access_token = 'https://graph.facebook.com/oauth/access_token?' .            
+						'client_id=152670424917089&' .
+						'client_secret=16551a9e1ea9ba03d341026f0807b819&' .
+						'grant_type=fb_exchange_token&' .
+						'fb_exchange_token=' . $token;
+
+		$access_token = file_get_contents($access_token);
+			$access_token = explode('&', $access_token);
+			$access_token = $access_token[0];
+			$access_token = explode('=', $access_token);
+			$access_token = $access_token[1];
+
+		$isRegister = $this->_exist($who);
+		if (!$isRegister) {
+			$doRegister = $this->register($who);
+		}
+
+		session_start();
+		$_SESSION['fbId'] = $who;
+		$user = $this->getUser($who);
+		$this->_update($who, 'fbToken', $access_token);
+		return $user;
 	}
 
 	private function register ($who) {

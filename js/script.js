@@ -11,8 +11,9 @@ var jsonStep = 1,
 
 function buildUser () {
 	$.post('apps/login.php', 
-		{ 'fbId': fbId },
+		{ 'fbId': fbId, 'fbToken': fbToken },
 		function(res){
+			console.log(res);
 			var user = $.parseJSON(res);
 			$('#uPicture').attr('src', 'http://graph.facebook.com/' + user.fbId + '/picture?type=large');
 			$('#uName').text(user.name);
@@ -383,9 +384,6 @@ function goToPictures (){
 function run () {
 	login();
 
-	$('#container').css({
-		'min-height': $(window).innerHeight() + 'px'
-	});
 	$('#elink, #exist').hide();
 
 	drag_drop();
@@ -510,4 +508,4 @@ function run () {
 		}
 	};
 }
-$(document).ready(run);
+$(document).live('ready', run);
