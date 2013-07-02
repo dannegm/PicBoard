@@ -40,13 +40,13 @@ class Pics
 		$conexion = $this->_mysqli;
 
 		$step = $step -1;
-		$offset = $step * 20;
+		$offset = $step * 30;
 
 		switch ($key) {
-			case 'author': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$value}' AND `status` = '1' ORDER BY `id` DESC LIMIT {$offset},20"; break;
+			case 'author': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `author` = '{$value}' AND `status` = '1' ORDER BY `id` DESC LIMIT {$offset},30"; break;
 			case 'picture': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `uid` = '{$value}'"; break;
-			case 'width': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `width` > '{$value}' AND `status` = '1' ORDER BY `id` DESC LIMIT {$offset},20"; break;
-			default: $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `status` = '1' ORDER BY `id` DESC LIMIT {$offset},20"; break;
+			case 'width': $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `width` > '{$value}' AND `status` = '1' ORDER BY `id` DESC LIMIT {$offset},30"; break;
+			default: $query = "SELECT * FROM `{$this->_tb_pics}` WHERE `status` = '1' ORDER BY `id` DESC LIMIT {$offset},30"; break;
 		}
 
 		$conexion = $this->_mysqli;
