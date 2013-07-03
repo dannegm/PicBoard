@@ -401,6 +401,8 @@ function run () {
 		goToPicture(picIdn[0]);
 
 		$('#noLogin').hide();
+		$('#about').hide();
+		$('#container').css('height', 'auto');
 	}
 
 	$('#goToHome').live('click', function(e){
@@ -508,4 +510,4 @@ function run () {
 		}
 	};
 }
-$(document).live('ready', run);
+$(document).ready(run);

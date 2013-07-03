@@ -19,7 +19,7 @@ if ($do != 'not') {
 
 	$content = str_replace('<3', '♥', $content);
 
-	$content = strip_tags($content);
+	$content = htmlentities($content);
 	$ccomment = $c->comment($pic, $content);
 
 	if ($ccomment) {
