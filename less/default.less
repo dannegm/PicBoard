@@ -254,6 +254,7 @@ input {
 		img {
 			display: block;
 			width: 100%;
+			background: url('../img/ps_neutral.png');
 		}
 	}
 	div {
@@ -699,6 +700,41 @@ form {
 			background: #eee;
 			outline: none;
 		}
+	}
+}
+
+#pop {
+	position: absolute;
+	position: fixed;
+	top: 0; bottom: 0; left: 0; right: 0;
+	z-index: 99998;
+	background: #222;
+	background: rgba(0,0,0,.9);
+	overflow: auto;
+	cursor: pointer;
+
+	display: none;
+
+	img {
+		min-width: 10px;
+		max-width: 80%;
+		display: block;
+		margin: 100px auto;
+		box-shadow: 0 0 20px rgb(0,0,0);
+		background: url('../img/ps_neutral.png');
+	}
+	p {
+		position: absolute;
+		width: 150px;
+		text-align: center;
+		margin: auto;
+		margin-top: 120px;
+		color: #fff;
+		background: rgba(0,0,0,.7);
+		font-size: 16px;
+		padding: 10px;
+		border-radius: 3px;
+		z-index: 99999;
 	}
 }
 

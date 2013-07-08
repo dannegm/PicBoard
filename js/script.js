@@ -11,9 +11,8 @@ var jsonStep = 1,
 
 function buildUser () {
 	$.post('apps/login.php', 
-		{ 'fbId': fbId, 'fbToken': fbToken },
+		{ 'fbId': fbId },
 		function(res){
-			console.log(res);
 			var user = $.parseJSON(res);
 			$('#uPicture').attr('src', 'http://graph.facebook.com/' + user.fbId + '/picture?type=large');
 			$('#uName').text(user.name);
@@ -25,17 +24,22 @@ function buildUser () {
 		}
 	);
 }
+function isLogin () {
+	fbId = localStorage.fbId;
+	buildUser();
+	$('#muPictureForm').attr('src', 'http://graph.facebook.com/' + fbId + '/picture');
+	if ( !thisDomain.match(/viewer/i) ){
+		reload_pictures();
+	}
+}
 function login (){
 	function doLogin (){
 		FB.api('/me', function(user){
 			var fbAuth = FB.getAuthResponse();
-				fbId = fbAuth.userID;
 				fbToken = fbAuth.accessToken;
-				buildUser();
-				$('#muPictureForm').attr('src', 'http://graph.facebook.com/' + fbId + '/picture');
-				if ( !thisDomain.match(/viewer/i) ){
-					reload_pictures();
-				}
+				fbId = fbAuth.userID;
+				localStorage.fbId = fbId;
+				isLogin();
 		});
 	}
 	function chkLogin (resp) {
@@ -298,9 +302,34 @@ function goToPicture (picId){
 
 			pUser = res.author;
 
-			$('#pPicture').attr('src', cdomain + uid);
+			var reizeImg = cdomain + uid + '?resize';
+			if (res.mimetype == 'image/gif') reizeImg = cdomain + uid;
+			$('#pPicture').attr('src', reizeImg);
+
+			$('#pop img').attr('src', cdomain + uid);
+
 			$('#pLink').val(cdomain + uid);
 			$('#goToPicture').attr('href', cdomain + uid);
+			$('#download').attr('href', cdomain + uid + '?download');
+
+			$('#goToPicture').click(function(e){
+				e.preventDefault();
+
+				var mLeft = ($(window).width() /2) - 75;
+				$('#pop p').css('margin-left', mLeft + 'px');
+
+				$('body').css('overflow', 'hidden');
+				$('#pop').fadeIn();
+
+				setTimeout(function(){
+					$('#pop p').fadeOut();
+				}, 5 * 1000);
+			});
+			$('#pop').click(function(){
+				$('body').css('overflow', 'auto');
+				$('#pop').fadeOut();
+				$('#pop p').show();
+			});
 
 			clickeableinput('#pLink');
 
@@ -382,7 +411,12 @@ function goToPictures (){
 }
 
 function run () {
-	login();
+
+	if (localStorage.fbId) {
+		isLogin();
+	} else {
+		login();
+	}
 
 	$('#elink, #exist').hide();
 
@@ -479,23 +513,25 @@ function run () {
 		var key = e.keyCode;
 		if(!e.shiftKey){
 			if (key == '13'){
-				e.preventDefault();
-				$.post('apps/comment.php', {
-					'do': 'it',
-					'pic': $(this).attr('rel'),
-					'user': fbId,
-					'content': $('#cContent').text()
-				}, function(re){
-					var res = re.split(':');
-					if (res[0] != '0'){
-						var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>' + res[2] + '</strong><span>' + res[3] + '</span></p></article>';
-						$('#comments').prepend(tmp);
-						$('#cContent').html('');
-					}else{
-						alert(re);
-					}
-					console.log(re);
-				});
+				if ( $(this).text() != '' ){
+					e.preventDefault();
+					$.post('apps/comment.php', {
+						'do': 'it',
+						'pic': $(this).attr('rel'),
+						'user': fbId,
+						'content': $('#cContent').text()
+					}, function(re){
+						var res = re.split(':');
+						if (res[0] != '0'){
+							var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>' + res[2] + '</strong><span>' + res[3] + '</span></p></article>';
+							$('#comments').prepend(tmp);
+							$('#cContent').html('');
+						}else{
+							alert(re);
+						}
+						console.log(re);
+					});
+				}
 			}
 		}
 	});

@@ -33,6 +33,11 @@
 	$pic = file_get_contents($domain . $p . '?info');
 		$pic = json_decode($pic);
 
+	$picode = $domain . $p . '?resize';
+	if ( $pic->mimetype == 'image/gif') {
+		$picode = $domain . $p;
+	}
+
 	$authorID = $pic->author->fbId;
 	$authorToken = $user->getAccessToken($authorID);
 ?>
@@ -52,7 +57,7 @@
 	<meta property="og:title" content="" />
 	<meta property="og:description" content="Imagen de <?php echo $pic->author->name; ?> en Picboard" />
 
-	<meta charset="utf-8">
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
 	<meta name="viewport" content="width=device-width" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<title>Dannegm Picboard</title>
@@ -81,19 +86,40 @@
 					$(this).html('Comenta ésta imagen...');
 				}
 			});
+
+			$('#goToPicture').click(function(e){
+				e.preventDefault();
+
+				var mLeft = ($(window).width() /2) - 75;
+				$('#pop p').css('margin-left', mLeft + 'px');
+
+				$('body').css('overflow', 'hidden');
+				$('#pop').fadeIn();
+
+				setTimeout(function(){
+					$('#pop p').fadeOut();
+				}, 5 * 1000);
+			});
+			$('#pop').click(function(){
+				$('body').css('overflow', 'auto');
+				$('#pop').fadeOut();
+				$('#pop p').show();
+			});
+
 			$('#cContent').keypress(function(e){
 				var key = e.keyCode;
 				if(!e.shiftKey){
 					if (key == '13'){
-						e.preventDefault();
-						$.post(cdomain + 'apps/comment.php', {
-							'do': 'it',
-							'pic': '<?php echo $p; ?>',
-							'user': fbId,
-							'content': $('#cContent').text()
-						}, function(re){
-							var res = re.split(':');
-							if (res[0] != '0'){
+						if ( $(this).text() != '' ){
+							e.preventDefault();
+							$.post(cdomain + 'apps/comment.php', {
+								'do': 'it',
+								'pic': '<?php echo $p; ?>',
+								'user': fbId,
+								'content': $('#cContent').text()
+							}, function(re){
+								var res = re.split(':');
+								if (res[0] != '0'){
 
 <?php /*
 								var
@@ -108,14 +134,15 @@
 
 */ ?>
 
-								var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>' + res[2] + '</strong><span>' + res[3] + '</span></p></article>';
-								$('#comments').prepend(tmp);
-								$('#cContent').html('');
-							}else{
-								alert(re);
-							}
-							console.log(re);
-						});
+									var tmp = '<article><img src="http://graph.facebook.com/' + fbId + '/picture" /><p><strong>' + res[2] + '</strong><span>' + res[3] + '</span></p></article>';
+									$('#comments').prepend(tmp);
+									$('#cContent').html('');
+								}else{
+									alert(re);
+								}
+								console.log(re);
+							});
+						}
 					}
 				}
 			});
@@ -137,7 +164,7 @@
 	<section id="container">
 		<article id="picture" style="display: block;">
 			<figure>
-				<img id="pPicture" src="<?php echo $domain . $p; ?>" />
+				<img id="pPicture" src="<?php echo $picode; ?>" />
 			</figure>
 			<div>
 				<div class="miniProfile">
@@ -152,7 +179,8 @@
 
 				<div class="tools">
 					<input id="pLink" type="text" placeholder="Url de la imágen" value="<?php echo $domain . $p; ?>" />
-					<a class="btn" href="<?php echo $domain . $p; ?>" target="_blank">Ver en tamaño completo</a>
+					<a id="goToPicture" class="btn" href="<?php echo $domain . $p; ?>" target="_blank">Ver en tamaño completo</a>
+					<a id="download" class="btn clear" href="<?php echo $domain . $p . '?download'; ?>">Descargar</a>
 				</div>
 
 				<?php echo $cForm; ?>
@@ -177,6 +205,11 @@
 		<p>
 			<span>Proyecto desarollodado por <a href="http://github.com/dannegm">@dannegm</a>, no se te olvide seguir el proyecto en <a href="https://github.com/dannegm/PicBoard/" target="_blank">github</a>.</span>
 		</p>
+	</section>
+
+	<section id="pop">
+		<p>Click para cerrar</p>
+		<img src="<?php echo $domain . $p; ?>" />
 	</section>
 </body>
 </html>

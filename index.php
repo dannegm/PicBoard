@@ -118,6 +118,7 @@
 					<input id="pLink" type="text" placeholder="Url de la imágen" />
 					<a id="goToPicture" class="btn" href="#">Ver en tamaño completo</a>
 					<a id="goToPictures" class="btn clear" href="#">Regresar</a>
+					<a id="download" class="btn clear" href="#">Descargar</a>
 				</div>
 
 				<form id="cForm">
@@ -172,6 +173,11 @@
 				<p>Proyecto desarollodado por <a href="http://github.com/dannegm">@dannegm</a>, no se te olvide seguir el proyecto en <a href="https://github.com/dannegm/PicBoard/" target="_blank">github</a>.</p>
 			</footer>
 		</div>
+	</section>
+
+	<section id="pop">
+		<p>Click para cerrar</p>
+		<img src="#" />
 	</section>
 </body>
 </html>
