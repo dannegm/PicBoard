@@ -84,8 +84,8 @@ class Users
 		}
 	}
 
-	public function login ($who, $token) {
-		$access_token = 'https://graph.facebook.com/oauth/access_token?' .            
+	public function login ($who) {
+	/*	$access_token = 'https://graph.facebook.com/oauth/access_token?' .            
 						'client_id=152670424917089&' .
 						'client_secret=16551a9e1ea9ba03d341026f0807b819&' .
 						'grant_type=fb_exchange_token&' .
@@ -95,7 +95,7 @@ class Users
 			$access_token = explode('&', $access_token);
 			$access_token = $access_token[0];
 			$access_token = explode('=', $access_token);
-			$access_token = $access_token[1];
+			$access_token = $access_token[1]; */
 
 		$isRegister = $this->_exist($who);
 		if (!$isRegister) {
@@ -105,7 +105,7 @@ class Users
 		session_start();
 		$_SESSION['fbId'] = $who;
 		$user = $this->getUser($who);
-		$this->_update($who, 'fbToken', $access_token);
+		//$this->_update($who, 'fbToken', $access_token);
 		return $user;
 	}
 

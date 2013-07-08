@@ -8,7 +8,7 @@ $user = new Users ();
 $fbId = isset($_POST['fbId']) ? $_POST['fbId'] : 'not';
 $fbToken = isset($_POST['fbToken']) ? $_POST['fbToken'] : 'not';
 
-$result = $user->login( $fbId, $fbToken );
+$result = $user->login( $fbId );
 
 //header('Content-type: text/javascript');
 echo json_encode($result);
