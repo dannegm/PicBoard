@@ -14,6 +14,12 @@ if ($pic->exist($p)) {
 
 		$pic->getThumb($p);
 		
+	}elseif (isset($_GET['resize'])) {
+
+		$size = $_GET['resize'];
+		if ($size == ('' || null || 0)) $size = 450;
+		$pic->resize($p, $size);
+
 	}elseif (isset($_GET['info'])) {
 
 		$json = $pic->getInfo($p);
@@ -21,6 +27,20 @@ if ($pic->exist($p)) {
 
 		header('Content-type: text/javascript');
 		echo $json;
+
+	}elseif (isset($_GET['download'])) {
+
+		$picture = $pic->printImg($p);
+
+		$filename = $p . '.' . $picture['ext'];
+
+		header('Cache-Control: public');
+		header('Content-Description: File Transfer');
+		header('Content-Disposition: attachment; filename=' . $filename);
+		header('Content-type: ' . $picture['mimetype']);
+		header('Content-Transfer-Encoding: binary');
+
+		echo $picture['code'];
 
 	}else{
 

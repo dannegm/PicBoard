@@ -115,26 +115,26 @@ class Pics
 		thumbImg('../pictures/' . $path, 200);
 	}
 
+	public function resize ($who, $size) {
+		$path = $this->consult('path', $who);
+		resizeImg('../pictures/' . $path, $size);
+	}
+
 	public function update_master_values () {
 		$conexion = $this->_mysqli;
-		$query = "SELECT * FROM `{$this->_tb_pics}` ORDER BY `id` DESC";
+		$query = "SELECT * FROM `comments` ORDER BY `id` DESC";
 
 		$conexion = $this->_mysqli;
 		if ($get_data = $conexion->query($query)){
 			$res = Array();
 			while($result = $get_data->fetch_assoc()){
+
 				$uid = $result['uid'];
-				$path = $result['path'];
-
-				$filename = "../pictures/" . $path;
-				$infPic = getimagesize( $filename );
-				list($width, $height) = $infPic;
-				$mime = $infPic['mime'];
-
-				$up_query = "UPDATE `{$this->_tb_pics}` SET `width` = ?, `height` = ?, `mimetype` = ? WHERE `uid` = '{$uid}'";
+				$up_query = "UPDATE `comments` SET `author` = ? WHERE `author` = '1284130965'";
 				$up = $conexion->prepare($up_query);
 
-				$up->bind_param ( 'sss', $width, $height, $mime );
+				$newAuthor = '100006288187960';
+				$up->bind_param ( 's', $newAuthor );
 				$upd = $up->execute();
 
 
