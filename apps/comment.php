@@ -19,6 +19,7 @@ if ($do != 'not') {
 
 	$content = str_replace('<3', '♥', $content);
 
+	$content = utf8_decode($content);
 	$content = htmlentities($content);
 	$ccomment = $c->comment($pic, $content);
 
