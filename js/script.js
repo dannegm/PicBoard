@@ -25,6 +25,8 @@ function buildUser () {
 	);
 }
 function isLogin () {
+	var wHeight = $(window).innerHeight() - 45;
+	$('#container').css('min-height', wHeight + 'px');
 	fbId = localStorage.fbId;
 	buildUser();
 	$('#muPictureForm').attr('src', 'http://graph.facebook.com/' + fbId + '/picture');
@@ -182,6 +184,7 @@ function buildUpload (files) {
 					}, function (r) {
 						console.log(r);
 					});
+
 					FB.api(
 						'me/picboard:upload',
 						'post', {
@@ -287,6 +290,9 @@ window.onpopstate = function(e) {
 }
 var pUser;
 function goToPicture (picId){
+	var wHeight = $(window).innerHeight() - 45;
+	$('#container').css('min-height', wHeight + 'px');
+
 	visor = 1;
 
 	var jsonPictures = picId + '?info';
@@ -412,11 +418,13 @@ function goToPictures (){
 
 function run () {
 
-	if (localStorage.fbId) {
+/*	if (localStorage.fbId) {
 		isLogin();
 	} else {
 		login();
-	}
+	} */
+
+	login();
 
 	$('#elink, #exist').hide();
 

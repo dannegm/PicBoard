@@ -48,6 +48,12 @@
         
 	<meta property="fb:app_id" content="152670424917089" />
 
+	<meta name="twitter:card" content="photo" />
+	<meta name="twitter:site" content="dannegmweb">
+	<meta name="twitter:image" content="http://dannegm.pro/picboard/<?php echo $p; ?>?resize" />
+	<meta name="twitter:image:width" content="<?php echo $pic->width; ?>" />
+	<meta name="twitter:image:height" content="<?php echo $pic->height; ?>" />
+
 	<meta property="og:type" content="picboard:picture" />
 	<meta property="og:site_name" content="Dannegm Picboard" />
 
@@ -157,7 +163,7 @@
 			<h2>PicBoard</h2>
 			<ul>
 				<li><a href="<?php echo $domain; ?>">Inicio</a></li>
-				<li id="goToAbout">Acerca de</li>
+				<li id="goToAbout"><a href="#">Acerca de</a></li>
 			</ul>
 		</div>
 	</header>

@@ -25,23 +25,24 @@ header {
 		li {
 			display: block;
 			float: left;
-			padding: 13px 20px;
-			background: rgba(0, 0, 0, 0.1);
-			color: #fff;
-			cursor: pointer;
-			font-size: 14px;
-			border-left: 1px solid rgba(0,0,0, 0.1);
-			.transition(all .3s);
-
-			&:hover {
-				background: rgba(255,255,255,.1);
-			}
-			&.active {
-				background: rgba(0,0,0,.3);
-			}
 			a {
 				color: #fff;
 				text-decoration: none;
+				padding: 13px 20px;
+				background: rgba(0, 0, 0, 0.1);
+				color: #fff;
+				cursor: pointer;
+				display: block;
+				font-size: 14px;
+				border-left: 1px solid rgba(0,0,0, 0.1);
+				.transition(all .3s);
+
+				&:hover {
+					background: rgba(255,255,255,.1);
+				}
+				&.active {
+					background: rgba(0,0,0,.3);
+				}
 			}
 		}
 	}

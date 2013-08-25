@@ -42,9 +42,9 @@
 		<h1><a href="http://dannegm.com">Dannegm</a></h1>
 		<h2>PicBoard</h2>
 		<ul>
-			<li id="goToHome" class="active">Inicio</li>
-			<li id="goToProfile">Mis imágenes</li>
-			<li id="goToAbout">Acerca de</li>
+			<li id="goToHome" class="active"><a>Inicio</a></li>
+			<li id="goToProfile"><a>Mis imágenes</a></li>
+			<li id="goToAbout"><a>Acerca de</a></li>
 		</ul>
 	</header>
 
