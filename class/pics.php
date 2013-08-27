@@ -74,6 +74,7 @@ class Pics
 					'mimetype' => $result['mimetype'],
 					'width' => $result['width'],
 					'height' => $result['height'],
+					'title' => $result['title'],
 					'comments' => $Comments
 				//	'prints' => $result['prints']
 				);
@@ -94,6 +95,9 @@ class Pics
 				$author = $user->getUser($result['author']);
 				$Comments = $Comments->getComments($result['uid']);
 
+				$colors = trim($result['colors'], ';');
+				$colors = explode(';', $colors);
+
 				$res = Array(
 					'index' => $result['id'],
 					'id' => $result['uid'],
@@ -103,6 +107,9 @@ class Pics
 					'mimetype' => $result['mimetype'],
 					'width' => $result['width'],
 					'height' => $result['height'],
+					'title' => $result['title'],
+					'description' => $result['description'],
+					'colors' => $colors,
 					'comments' => $Comments
 				);
 				return $res;
@@ -122,7 +129,7 @@ class Pics
 
 	public function update_master_values () {
 		$conexion = $this->_mysqli;
-		$query = "SELECT * FROM `comments` ORDER BY `id` DESC";
+		$query = "SELECT * FROM `{$this->_tb_pics}` ORDER BY `id` DESC";
 
 		$conexion = $this->_mysqli;
 		if ($get_data = $conexion->query($query)){
@@ -130,11 +137,17 @@ class Pics
 			while($result = $get_data->fetch_assoc()){
 
 				$uid = $result['uid'];
-				$up_query = "UPDATE `comments` SET `author` = ? WHERE `author` = '1284130965'";
+				$filename = "../pictures/" . $result['path'];
+				$up_query = "UPDATE `{$this->_tb_pics}` SET `colors` = ? WHERE `uid` = '{$uid}'";
 				$up = $conexion->prepare($up_query);
 
-				$newAuthor = '100006288187960';
-				$up->bind_param ( 's', $newAuthor );
+				$imgColors = colorPalette($filename, 5);
+				$colors = "";
+				foreach ($imgColors as $c) {
+					$colors = $colors . '#' . $c . ';';
+				}
+
+				$up->bind_param ( 's', $colors );
 				$upd = $up->execute();
 
 
@@ -186,6 +199,12 @@ class Pics
 		list($width, $height) = $infPic;
 		$mime = $infPic['mime'];
 
+		$imgColors = colorPalette($filename, 5);
+		$colors = "";
+		foreach ($imgColors as $c) {
+			$colors = $colors . '#' . $c . ';';
+		}
+
 		date_default_timezone_set("America/Mexico_City");
 			$date = date("w j-m-Y g:i:s:a");
 
@@ -197,11 +216,11 @@ class Pics
 		if ($content != '') {
 			$find = $this->_exist($md5);
 			if (!$find){
-				$query = "INSERT INTO `{$this->_tb_pics}` (`uid`, `path`, `date`, `content`, `md5`, `author`, `width`, `height`, `mimetype`, `status`)"
-					. "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+				$query = "INSERT INTO `{$this->_tb_pics}` (`uid`, `path`, `date`, `content`, `md5`, `author`, `width`, `height`, `mimetype`, `status`, `colors`)"
+					. "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 				;
 				$ins = $conexion->prepare($query);
-				$ins->bind_param( 'ssssssssss', $uid, $uri, $date, $content, $md5, $author, $width, $height, $mime, $status);
+				$ins->bind_param( 'sssssssssss', $uid, $uri, $date, $content, $md5, $author, $width, $height, $mime, $status, $colors);
 				$insert = $ins->execute();
 
 				if ( !$insert ) {

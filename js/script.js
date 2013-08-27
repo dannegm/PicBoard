@@ -175,7 +175,7 @@ function buildUpload (files) {
 					addUploadImg(picture, res[2]);
 					$('html, body').scrollTop(0);
 
-					FB.ui({
+				/*	FB.ui({
 						method: 'feed',
 						link: cdomain + 'viewer/' + res[2],
 						picture: cdomain + res[2] + '?thumb',
@@ -183,7 +183,7 @@ function buildUpload (files) {
 						caption: 'He subido una imagen'
 					}, function (r) {
 						console.log(r);
-					});
+					}); */
 
 					FB.api(
 						'me/picboard:upload',
@@ -338,6 +338,12 @@ function goToPicture (picId){
 			});
 
 			clickeableinput('#pLink');
+
+			$('#colors').html('');
+			var colors = res.colors;
+			for (x in colors) {
+				$('#colors').append('<span style="background:' + colors[x] + '"></span>');
+			}
 
 			var fecha = date.split(' ');
 			var diasem = parseInt( fecha[0] );

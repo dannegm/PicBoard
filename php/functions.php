@@ -130,4 +130,55 @@ function resizeImg ($img, $size = 450) {
 	imagedestroy($image);
 	imagedestroy($image_p);
 }
+function getImgKeyColor($img) {
+	$type = getimagesize($img);
+		$type = $type['mime'];
+		$type = explode('/', $type);
+		$type= end($type);
+
+	switch ( $type ){
+		case "jpeg": $img = imagecreatefromjpeg( $img ); break;
+		case "png": $img = imagecreatefrompng( $img ); break;
+		case "gif": $img = imagecreatefromgif( $img ); break;
+	}
+
+	$x = 50; $y = 50;
+	$color = imagecolorat($img, $x, $y);
+
+	$key = imagecolorsforindex($img, $color);
+	return $key;
+}
+function colorPalette($imageFile, $numColors, $granularity = 5) {
+	$granularity = max(1, abs((int)$granularity));
+	$colors = array();
+	$size = @getimagesize($imageFile);
+
+	if( $size === false ){
+		return false;
+	}
+	$img = @imagecreatefromstring(file_get_contents($imageFile));
+	if( !$img ){
+		return false;
+	}
+
+	for($x = 0; $x < $size[0]; $x += $granularity){
+		for($y = 0; $y < $size[1]; $y += $granularity){
+			$thisColor = imagecolorat($img, $x, $y);
+			$rgb = imagecolorsforindex($img, $thisColor);
+
+			$red = round(round(($rgb['red'] / 0x33)) * 0x33);
+			$green = round(round(($rgb['green'] / 0x33)) * 0x33);
+			$blue = round(round(($rgb['blue'] / 0x33)) * 0x33);
+			$thisRGB = sprintf('%02X%02X%02X', $red, $green, $blue);
+
+			if(array_key_exists($thisRGB, $colors)){
+				$colors[$thisRGB]++;
+			}else{
+				$colors[$thisRGB] = 1;
+			}
+		}
+	}
+	arsort($colors);
+	return array_slice(array_keys($colors), 0, $numColors);
+}
 ?>

@@ -100,8 +100,21 @@
 
 	<section id="container">
 		<article id="picture">
+			<div id="upDateData">
+				<form>
+					<input type="text" id="upTitle" placeholder="Título" />
+					<textarea id="upDescription" placeholder="Descripción"></textarea>
+					<button class="btn">Guardar</button>
+					<button class="btn clear">Cancelar</button>
+				</form>
+				<article>
+					<h3>Describe tu imagen</h3>
+					<p>Hablanos mas sobre tu imagen, ponle un título, una descripción... Coplementa mas eso que quieres expresar... <strong>:)</strong></p>
+				</article>
+			</div>
 			<figure>
 				<img id="pPicture" src="#" />
+				<div id="colors"></div>
 			</figure>
 			<div>
 				<div class="miniProfile">
