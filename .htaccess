@@ -1,4 +1,4 @@
-DirectoryIndex index.php index.php3 index.html index.htm index.png index.jpg index.gif
+DirectoryIndex index.php index.html index.png index.jpg index.gif
 
 RewriteEngine on
 
